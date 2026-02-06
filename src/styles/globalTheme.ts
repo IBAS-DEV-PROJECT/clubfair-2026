@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 import { styleReset } from 'react95';
+import { colors } from './colors';
 import ms_sans_serif from 'react95/dist/fonts/ms_sans_serif.woff2';
 import ms_sans_serif_bold from 'react95/dist/fonts/ms_sans_serif_bold.woff2';
 
@@ -25,7 +26,7 @@ export const GlobalStyles = createGlobalStyle`
   }
   body {
     font-family: 'ms_sans_serif', 'RoundedFixedsys';
-    background: #008080;
+    background: ${colors.desktopBackground};
     margin: 0;
     display: flex;
     justify-content: center;
