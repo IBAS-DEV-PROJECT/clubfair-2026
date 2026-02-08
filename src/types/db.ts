@@ -6,12 +6,6 @@
 
 import type { Gender, ActionCategory, ActionDetail, ClubFairStatus } from '../constants';
 
-/**
- * ==========================================
- * Table Entities (DB 테이블 타입)
- * ==========================================
- */
-
 export interface User {
   id: string;             
   phone: string;          
@@ -49,17 +43,4 @@ export interface ClubFairSetting {
   end_at: string;      
   status: ClubFairStatus;
   is_paused: boolean;  
-}
-
-/**
- * ==========================================
- * 3. RPC Function Params
- * ==========================================
- */
-
-export interface HandleDotoriParams {
-  p_user_id: string;
-  p_category: ActionCategory;
-  p_detail: ActionDetail;
-  p_change: number;
 }
