@@ -1,40 +1,14 @@
 /**
  * ==========================================
- * 1. Enums (상수 정의)
+ * DB Schema Types (DB 스키마 타입)
  * ==========================================
  */
 
-export enum Gender {
-  MALE = 0,
-  FEMALE = 1,
-}
-
-export enum ActionCategory {
-  MISSION = 'MISSION',   
-  PURCHASE = 'PURCHASE', 
-}
-
-export enum ActionDetail {
-  // Mission
-  TEST = 'TEST',      
-  FLLOW = 'FLLOW',
-  STORY = 'STORY',   
-  GAME = 'GAME',      
-
-  // Purchase
-  EVENT = 'EVENT', 
-}
-
-export enum ClubFairStatus {
-  PRE = 'PRE',       // 사전 기간
-  MAIN = 'MAIN',     // 박람회 기간
-  AFTER = 'AFTER',   // 결과 조회 기간
-  CLOSED = 'CLOSED'  // 종료
-}
+import type { Gender, ActionCategory, ActionDetail, ClubFairStatus } from '../constants';
 
 /**
  * ==========================================
- * 2. Table Entities (DB 테이블 타입)
+ * Table Entities (DB 테이블 타입)
  * ==========================================
  */
 
