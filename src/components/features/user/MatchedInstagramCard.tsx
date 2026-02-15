@@ -12,10 +12,6 @@ const StyledWindowContent = styled(WindowContent)`
   align-items: center;
 `;
 
-const InstagramIdText = styled.strong`
-  display: inline-block;
-`;
-
 const StyledTooltip = styled(Tooltip)<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'inline-block' : 'none')};
 `;
@@ -37,7 +33,7 @@ const MatchedInstagramCard = ({ instagramId }: MatchedInstagramCardProps) => {
     <Window>
       <WindowHeader>매칭 결과</WindowHeader>
       <StyledWindowContent>
-        <InstagramIdText>@{instagramId}</InstagramIdText>
+        <strong>@{instagramId}</strong>
         <StyledTooltip text="아이디 복사 완료" enterDelay={0} leaveDelay={3000} $show={isCopied}>
           <Button size="sm" onClick={handleCopy}>
             복사
