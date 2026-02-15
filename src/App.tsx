@@ -13,6 +13,7 @@ import {
   AdminPage,
   SettingPage,
 } from './pages';
+import { Footer, Header } from './layouts';
 import DesktopBlocker from './components/shared/DesktopBlocker';
 
 const App = () => {
@@ -27,16 +28,17 @@ const App = () => {
           <DesktopBlocker />
         ) : (
           <Router>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/test" element={<TestPage />} />
-              <Route path="/my" element={<MyPage />} />
-              
-              <Route path="/admin" element={<AdminPage />} />
-              <Route path="/admin/setting" element={<SettingPage />} />
-            </Routes>
+            <Header />
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/test" element={<TestPage />} />
+                <Route path="/my" element={<MyPage />} />
+                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/admin/setting" element={<SettingPage />} />
+              </Routes>
+            <Footer />
           </Router>
         )}
       </ThemeProvider>
