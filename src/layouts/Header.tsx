@@ -1,7 +1,7 @@
 import { AppBar } from 'react95';
 import styled from 'styled-components';
 
-const HeaderWrapper = styled.header`
+const StyledAppBar = styled(AppBar)`
   position: fixed;
   top: 0;
   left: 0;
@@ -17,11 +17,9 @@ const HeaderText = styled.p`
 
 const Header = () => {
   return (
-    <HeaderWrapper>
-      <AppBar>
-        <HeaderText>CLUB_FAIR_2026</HeaderText>
-      </AppBar>
-    </HeaderWrapper>
+    <StyledAppBar>
+      <HeaderText>CLUB_FAIR_2026</HeaderText>
+    </StyledAppBar>
   );
 };
 

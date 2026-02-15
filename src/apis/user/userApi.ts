@@ -13,6 +13,15 @@ export interface MyMatchItem {
   score: number;
 }
 
+export interface EnterEventParams {
+  cost?: number;
+}
+
+export interface EnterEventResponse {
+  dotori: number;
+  action: MyActionListItem;
+}
+
 // ===== Mock 데이터 =====
 const MOCK_MY_USER: MyUserSummary = {
   id: 'user_me_001',
@@ -24,19 +33,19 @@ const MOCK_MY_ACTIONS: MyActionListItem[] = [
   {
     category: ActionCategory.MISSION,
     detail: ActionDetail.TEST,
-    change: 20,
+    change: 2,
     created_at: '2026-02-12T10:00:00.000Z',
   },
   {
     category: ActionCategory.MISSION,
     detail: ActionDetail.STORY,
-    change: 5,
+    change: 1,
     created_at: '2026-02-13T11:20:00.000Z',
   },
   {
     category: ActionCategory.PURCHASE,
     detail: ActionDetail.EVENT,
-    change: -3,
+    change: -5,
     created_at: '2026-02-13T13:15:00.000Z',
   },
 ];
@@ -59,4 +68,32 @@ export async function getMyActions(): Promise<MyActionListItem[]> {
 
 export async function getMyMatches(): Promise<MyMatchItem[]> {
   return Promise.resolve(MOCK_MY_MATCHES);
+}
+
+export async function enterEvent(params: EnterEventParams = {}): Promise<EnterEventResponse> {
+  const cost = params.cost ?? 5;
+
+  if (cost <= 0) {
+    throw new Error('응모 비용은 1 이상이어야 합니다.');
+  }
+
+  if (MOCK_MY_USER.dotori < cost) {
+    throw new Error('도토리가 부족합니다.');
+  }
+
+  MOCK_MY_USER.dotori -= cost;
+
+  const action: MyActionListItem = {
+    category: ActionCategory.PURCHASE,
+    detail: ActionDetail.EVENT,
+    change: -cost,
+    created_at: new Date().toISOString(),
+  };
+
+  MOCK_MY_ACTIONS.unshift(action);
+
+  return Promise.resolve({
+    dotori: MOCK_MY_USER.dotori,
+    action,
+  });
 }
