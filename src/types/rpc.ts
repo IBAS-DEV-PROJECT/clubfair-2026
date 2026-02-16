@@ -10,4 +10,3 @@ export interface HandleDotoriParams {
   p_detail: ActionDetail;
   p_change: number;
 }
-

@@ -36,4 +36,3 @@ export const queryKeys = {
       ['admin', 'userSearch', { phoneLast4: params.phoneLast4 }] as const,
   },
 };
-

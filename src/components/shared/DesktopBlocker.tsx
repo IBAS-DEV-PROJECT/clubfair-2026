@@ -22,9 +22,7 @@ const DesktopBlocker = () => {
           <p style={{ marginBottom: '1rem' }}>
             이 서비스는 모바일 및 태블릿 환경에 최적화되어 있습니다.
           </p>
-          <p>
-            더 나은 경험을 위해 모바일 기기로 접속해 주세요!
-          </p>
+          <p>더 나은 경험을 위해 모바일 기기로 접속해 주세요!</p>
         </WindowContent>
       </Window>
     </Wrapper>
@@ -32,4 +30,3 @@ const DesktopBlocker = () => {
 };
 
 export default DesktopBlocker;
-

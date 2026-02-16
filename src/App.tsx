@@ -29,15 +29,15 @@ const App = () => {
         ) : (
           <Router>
             <Header />
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/signup" element={<SignUpPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/test" element={<TestPage />} />
-                <Route path="/my" element={<MyPage />} />
-                <Route path="/admin" element={<AdminPage />} />
-                <Route path="/admin/setting" element={<SettingPage />} />
-              </Routes>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/test" element={<TestPage />} />
+              <Route path="/my" element={<MyPage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/admin/setting" element={<SettingPage />} />
+            </Routes>
             <Footer />
           </Router>
         )}
