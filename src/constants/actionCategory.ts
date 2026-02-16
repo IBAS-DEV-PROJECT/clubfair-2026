@@ -5,3 +5,7 @@ export const ActionCategory = {
   PURCHASE: 'PURCHASE',
 } as const;
 
+export const ActionCategoryLabel: Record<ActionCategory, string> = {
+  MISSION: '획득',
+  PURCHASE: '차감',
+};

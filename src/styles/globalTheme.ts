@@ -28,9 +28,6 @@ export const GlobalStyles = createGlobalStyle`
     font-family: 'ms_sans_serif', 'RoundedFixedsys';
     background: ${colors.desktopBackground};
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     height: 100vh;
   }
   
@@ -52,4 +49,3 @@ export const GlobalStyles = createGlobalStyle`
     }
   }
 `;
-
