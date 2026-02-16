@@ -1,12 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
 import { Hourglass } from 'react95';
-import {
-  DotoriCard,
-  EntryButton,
-  MatchedInstagramCard,
-  MatchScoreCard,
-} from '../../components/features/user';
+import { DotoriCard, MatchedInstagramCard, MatchScoreCard } from '../../components/features/user';
+import { PrimaryButton } from '../../components/shared';
 import { enterEvent, getMyActions, getMyMatches, getMyUser } from '../../apis/user/userApi';
 import { queryKeys } from '../../hooks/queryKeys';
 import { formatPostgresDateTime } from '../../utils/date';
@@ -79,11 +75,14 @@ const MyResultContainer = () => {
       <MatchedInstagramCard instagramId={instagramId} />
       <MatchScoreCard score={score} />
       <DotoriCard dotori={dotori} history={history} />
-      <EntryButton
+      <PrimaryButton
+        type="apply"
         dotori={dotori}
         isPending={entryMutation.isPending}
         onClick={() => entryMutation.mutate()}
-      />
+      >
+        응모하기
+      </PrimaryButton>
     </>
   );
 };
