@@ -3,10 +3,7 @@ import type { User, UserAction } from '../../types/db';
 
 // ===== 타입 정의 =====
 export type MyUserSummary = Pick<User, 'id' | 'name' | 'dotori'>;
-export type MyActionListItem = Pick<
-  UserAction,
-  'category' | 'detail' | 'change' | 'created_at'
->;
+export type MyActionListItem = Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
 
 export interface MyMatchItem {
   partner_instagram_id: string;

@@ -6,10 +6,7 @@ export interface SubmitTestAnswersParams {
   answers: number[];
 }
 
-export type DotoriHistoryItem = Pick<
-  UserAction,
-  'category' | 'detail' | 'change' | 'created_at'
->;
+export type DotoriHistoryItem = Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
 
 export interface SubmitTestAnswersResponse {
   score: number;
@@ -34,7 +31,7 @@ const MOCK_DOTORI_HISTORY: DotoriHistoryItem[] = [
 
 // ===== API 함수 =====
 export async function submitTestAnswers(
-  params: SubmitTestAnswersParams
+  params: SubmitTestAnswersParams,
 ): Promise<SubmitTestAnswersResponse> {
   if (params.answers.length !== 10) {
     throw new Error('테스트 응답은 10개여야 합니다.');
@@ -50,4 +47,3 @@ export async function submitTestAnswers(
     dotori_history: MOCK_DOTORI_HISTORY,
   });
 }
-

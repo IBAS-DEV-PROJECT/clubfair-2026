@@ -5,4 +5,3 @@ export { default as TestPage } from './user/TestPage';
 export { default as MyPage } from './user/MyPage';
 export { default as AdminPage } from './admin/AdminPage';
 export { default as SettingPage } from './admin/SettingPage';
-

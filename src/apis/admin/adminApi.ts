@@ -66,20 +66,18 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
 }
 
 export async function searchUsersByPhoneLast4(
-  params: SearchUsersByPhoneLast4Params
+  params: SearchUsersByPhoneLast4Params,
 ): Promise<AdminUserSearchItem[]> {
   if (!/^\d{4}$/.test(params.phone_last4)) {
     throw new Error('전화번호 뒷자리는 숫자 4자리여야 합니다.');
   }
 
   return Promise.resolve(
-    MOCK_ADMIN_USERS.filter((user) => user.phone_last4 === params.phone_last4)
+    MOCK_ADMIN_USERS.filter((user) => user.phone_last4 === params.phone_last4),
   );
 }
 
-export async function grantDotoriToUser(
-  params: GrantDotoriParams
-): Promise<GrantDotoriResponse> {
+export async function grantDotoriToUser(params: GrantDotoriParams): Promise<GrantDotoriResponse> {
   if (params.amount <= 0) {
     throw new Error('지급 도토리는 1개 이상이어야 합니다.');
   }
@@ -102,4 +100,3 @@ export async function grantDotoriToUser(
     },
   });
 }
-

@@ -39,9 +39,7 @@ export function formatPostgresDateTime(
   const { locale = 'ko-KR', timeZone = 'Asia/Seoul', includeSeconds = false } = options;
 
   const date =
-    typeof value === 'string'
-      ? new Date(normalizePostgresDateTime(value))
-      : new Date(value);
+    typeof value === 'string' ? new Date(normalizePostgresDateTime(value)) : new Date(value);
 
   if (Number.isNaN(date.getTime())) {
     return '';
@@ -76,5 +74,3 @@ export function formatPostgresDateTime(
 
   return `${yy}/${mm}/${dd} ${hh}:${min}`;
 }
-
-

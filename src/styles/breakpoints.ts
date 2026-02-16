@@ -12,4 +12,3 @@ export const device = {
   mobileL: `(min-width: ${breakpoints.mobileL})`,
   tablet: `(min-width: ${breakpoints.tablet})`,
 };
-
