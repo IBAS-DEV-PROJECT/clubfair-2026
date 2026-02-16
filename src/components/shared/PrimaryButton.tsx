@@ -19,14 +19,23 @@ interface NavigateButtonProps extends BaseButtonProps {
   type: 'navigate';
 }
 
-type PrimaryButtonProps = ApplyButtonProps | NavigateButtonProps;
+// Submit type (form 제출)
+interface SubmitButtonProps extends Omit<BaseButtonProps, 'onClick'> {
+  type: 'submit';
+  isPending?: boolean;
+  disabled?: boolean;
+  fullWidth?: boolean;
+  loadingText?: string;
+}
+
+type PrimaryButtonProps = ApplyButtonProps | NavigateButtonProps | SubmitButtonProps;
 
 const PrimaryButton = (props: PrimaryButtonProps) => {
-  const { type, children, onClick } = props;
+  const { type, children } = props;
 
   switch (type) {
     case 'apply': {
-      const { dotori, requiredDotori = 5, isPending = false } = props;
+      const { onClick, dotori, requiredDotori = 5, isPending = false } = props;
       const isDisabled = dotori < requiredDotori || isPending;
 
       return (
@@ -36,7 +45,22 @@ const PrimaryButton = (props: PrimaryButtonProps) => {
       );
     }
     case 'navigate': {
+      const { onClick } = props;
       return <Button onClick={onClick}>{children}</Button>;
+    }
+    case 'submit': {
+      const {
+        isPending = false,
+        disabled = false,
+        fullWidth = false,
+        loadingText = '처리 중...',
+      } = props;
+
+      return (
+        <Button type="submit" disabled={disabled || isPending} fullWidth={fullWidth}>
+          {isPending ? loadingText : children}
+        </Button>
+      );
     }
     default:
       return null;
