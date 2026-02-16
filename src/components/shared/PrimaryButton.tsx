@@ -1,11 +1,7 @@
 import { Button, Hourglass } from 'react95';
 
-// apply: 응모하기 / navigate: 찾으러가기
-type PrimaryButtonType = 'apply' | 'navigate';
-
 // Base Props (공통 부분)
 interface BaseButtonProps {
-  type: PrimaryButtonType;
   children: React.ReactNode;
   onClick: () => void;
 }
@@ -21,9 +17,6 @@ interface ApplyButtonProps extends BaseButtonProps {
 // Navigate type (단순 클릭)
 interface NavigateButtonProps extends BaseButtonProps {
   type: 'navigate';
-  dotori?: never; // apply 전용
-  requiredDotori?: never; // apply 전용
-  isPending?: never; // apply 전용
 }
 
 type PrimaryButtonProps = ApplyButtonProps | NavigateButtonProps;
