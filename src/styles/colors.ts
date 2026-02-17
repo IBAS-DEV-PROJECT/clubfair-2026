@@ -22,6 +22,7 @@ export const colors = {
   borderDarkest: '#050505',
   borderLightest: '#ffffff',
   borderMedium: '#848484',
+  borderDark: '#808080', // 어두운 그림자 (Windows 95 표준)
 
   // 구분선
   divider: '#c0c0c0', // 컨텐츠 구분선
