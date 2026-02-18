@@ -5,7 +5,7 @@ import { colors } from '../../styles/colors';
 interface ModalProps {
   title: string;
   children: React.ReactNode;
-  onClose: () => void; // dismissible이 true일 때 호출
+  onClose: () => void;
   width?: number;
 }
 
@@ -97,9 +97,9 @@ const Modal = ({ title, children, onClose, width = 400 }: ModalProps) => {
       <StyledWindow $width={width}>
         <HeaderWrapper>
           <WindowHeader>{title}</WindowHeader>
-            <CloseButton onClick={onClose}>
-              <CloseIcon />
-            </CloseButton>
+          <CloseButton onClick={onClose}>
+            <CloseIcon />
+          </CloseButton>
         </HeaderWrapper>
         <WindowContent>{children}</WindowContent>
       </StyledWindow>
