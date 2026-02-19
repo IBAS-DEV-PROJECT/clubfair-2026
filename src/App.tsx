@@ -15,9 +15,17 @@ import {
 } from './pages';
 import { Footer, Header } from './layouts';
 import DesktopBlocker from './components/shared/DesktopBlocker';
+import { useUserAuthStore } from './stores/useUserAuthStore';
+import { useEffect } from 'react';
 
 const App = () => {
   const isDesktop = useMediaQuery({ query: `(min-width: ${breakpoints.laptop})` });
+  // 로컬 스토리지에서 로그인 세션 읽어오기 (user, isAuthenticated)
+  const init = useUserAuthStore((state) => state.init);
+
+  useEffect(()=> {
+    init();
+  }, []);
 
   return (
     <>
