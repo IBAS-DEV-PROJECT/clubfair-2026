@@ -1,7 +1,16 @@
-import { ActionCategory, ActionDetail } from '../../constants';
+import { ActionCategory, ActionDetail, AdminRole } from '../../constants';
 import type { UserAction } from '../../types/db';
 
 // ===== 타입 정의 =====
+export interface VerifyAdminPinParams {
+  pin: string;
+}
+
+export interface VerifyAdminPinResponse {
+  success: boolean;
+  role: AdminRole;
+}
+
 export interface AdminDashboardStats {
   visitors_today: number;
   visitors_total: number;
@@ -35,6 +44,9 @@ export interface GrantDotoriResponse {
 }
 
 // ===== Mock 데이터 =====
+const MOCK_ADMIN_PIN = '1234'; // /admin PIN
+const MOCK_SUPER_ADMIN_PIN = '5678'; // /admin/setting PIN
+
 const MOCK_ADMIN_DASHBOARD_STATS: AdminDashboardStats = {
   visitors_today: 123,
   visitors_total: 400,
@@ -61,6 +73,29 @@ const MOCK_ADMIN_USERS: AdminUserSearchItem[] = [
 ];
 
 // ===== API 함수 =====
+export async function verifyAdminPin(
+  params: VerifyAdminPinParams,
+): Promise<VerifyAdminPinResponse> {
+  // ADMIN PIN 확인
+  if (params.pin === MOCK_ADMIN_PIN) {
+    return Promise.resolve({
+      success: true,
+      role: AdminRole.ADMIN,
+    });
+  }
+
+  // SUPER_ADMIN PIN 확인
+  if (params.pin === MOCK_SUPER_ADMIN_PIN) {
+    return Promise.resolve({
+      success: true,
+      role: AdminRole.SUPER_ADMIN,
+    });
+  }
+
+  // PIN 불일치
+  throw new Error('PIN이 일치하지 않습니다.');
+}
+
 export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
   return Promise.resolve(MOCK_ADMIN_DASHBOARD_STATS);
 }
