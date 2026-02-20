@@ -12,14 +12,14 @@ interface UserAuthStore {
 export const useUserAuthStore = create<UserAuthStore>((set) => ({
     user: null,
     isAuthenticated: false,
-    loading: false,
+    loading: true,
 
     init: () => {
         // 로컬 스토리지에서 읽어오기
         supabase.auth.getSession().then(({ data: { session } }) => {
             set({
                 user: session?.user ?? null,
-                isAuthenticated: !! sessionStorage?.user,
+                isAuthenticated: !! session?.user,
                 loading: false,
             })
         })
