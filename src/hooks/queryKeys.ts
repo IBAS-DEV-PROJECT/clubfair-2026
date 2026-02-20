@@ -25,6 +25,7 @@ export const queryKeys = {
     myUser: () => ['user', 'myUser'] as const,
     myActions: () => ['user', 'myActions'] as const,
     myMatches: () => ['user', 'myMatches'] as const,
+    answers: (userId: string) => ['user', 'answers', { userId }] as const,
   },
   test: {
     result: (params: { answers: number[] }) =>
