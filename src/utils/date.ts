@@ -74,3 +74,7 @@ export function formatPostgresDateTime(
 
   return `${yy}/${mm}/${dd} ${hh}:${min}`;
 }
+
+export function toDateTimeLocalValue(isoString: string): string {
+  return isoString.slice(0, 16);
+}

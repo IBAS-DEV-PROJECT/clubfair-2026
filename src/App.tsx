@@ -11,9 +11,10 @@ import {
   TestPage,
   MyPage,
   AdminPage,
-  SettingPage,
+  AdminSettingPage,
 } from './pages';
-import { Footer, Header } from './layouts';
+import { Footer, Header, ProtectedAdminLayout } from './layouts';
+import { AdminRole } from './constants';
 import DesktopBlocker from './components/shared/DesktopBlocker';
 import ProtectedUserLayout from './layouts/ProtectedUserLayout';
 
@@ -43,11 +44,17 @@ const App = () => {
 
                 {/* 로그인 + 테스트 완료 필요 */}
                 <Route element={<ProtectedUserLayout />}>
-                  <Route path="/mypage" element={<MyPage />} />
+                  <Route path="/my" element={<MyPage />} />
                 </Route>
-                
+              </Route>
+
+              {/* Admin 페이지 - PIN 인증 필요 */}
+              <Route element={<ProtectedAdminLayout requiredRole={AdminRole.ADMIN} />}>
                 <Route path="/admin" element={<AdminPage />} />
-                <Route path="/admin/setting" element={<SettingPage />} />
+              </Route>
+
+              <Route element={<ProtectedAdminLayout requiredRole={AdminRole.SUPER_ADMIN} />}>
+                <Route path="/admin/setting" element={<AdminSettingPage />} />
               </Route>
             </Routes>
             <Footer />

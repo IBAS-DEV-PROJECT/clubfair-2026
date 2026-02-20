@@ -26,4 +26,7 @@ export const colors = {
 
   // 구분선
   divider: '#c0c0c0', // 컨텐츠 구분선
+
+  // 상태 색상
+  error: '#ff0000', // 에러 메시지
 };

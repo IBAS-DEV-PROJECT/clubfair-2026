@@ -1,8 +1,7 @@
-import LandingContainer from "../containers/landing/LandingContainer"
-import styled from "styled-components";
+import LandingContainer from '../containers/landing/LandingContainer';
+import styled from 'styled-components';
 import landingCoupleImage from '../assets/images/pixel_landing_couple.png';
-import { colors } from "../styles/colors";
-
+import { colors } from '../styles/colors';
 
 const Wrapper = styled.div`
   min-height: calc(100vh - 88px);
@@ -20,33 +19,33 @@ const Wrapper = styled.div`
 `;
 
 const Title = styled.h1`
-    font-size: 28px;
-    font-weight: bold;
-    color: ${colors.primary};
-    text-align: center;
-    margin: 0;
+  font-size: 28px;
+  font-weight: bold;
+  color: ${colors.primary};
+  text-align: center;
+  margin: 0;
 `;
 
 const Subtitle = styled.h2`
-    font-size: 20px;
-    color: ${colors.canvasText};
-    text-align: center;
-    margin: 0;
-    font-weight: 500;
+  font-size: 20px;
+  color: ${colors.canvasText};
+  text-align: center;
+  margin: 0;
+  font-weight: 500;
 `;
 
 const CoupleImage = styled.img`
-    width: 40%;
-    max-width: 320px;
-    margin: 16px 0;
-`
+  width: 40%;
+  max-width: 320px;
+  margin: 16px 0;
+`;
 
 const LandingPage = () => {
   return (
     <Wrapper>
       <Title>일촌 맺으러 가기</Title>
       <Subtitle>내 운명의 일촌은...?</Subtitle>
-      <CoupleImage src={landingCoupleImage} alt='픽셀 커플' />
+      <CoupleImage src={landingCoupleImage} alt="픽셀 커플" />
       <LandingContainer />
     </Wrapper>
   );

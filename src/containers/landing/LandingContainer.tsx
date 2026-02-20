@@ -12,31 +12,37 @@ const Container = styled.div`
 `;
 
 const LandingContainer = () => {
-    const navigate = useNavigate();
-    const { isAuthenticated, loading } = useUserAuthStore();
-    const { data: userData } = useUserQuery();
+  const navigate = useNavigate();
+  const { isAuthenticated, loading } = useUserAuthStore();
+  const { data: userData } = useUserQuery();
 
-    const hasCompletedTest = (userData?.answers?.length ?? 0) > 0;
-    
-    if (loading) return null;
+  const hasCompletedTest = (userData?.answers?.length ?? 0) > 0;
 
-    // 로그인 + 테스트 완료한 사용자는 즉시 마이페이지로 이동
-    if (isAuthenticated && hasCompletedTest) {
-        return <Navigate to="/mypage" />;
-    }
+  if (loading) return null;
 
-    return (
-        <Container>
-            {isAuthenticated && !hasCompletedTest ? (
-                <PrimaryButton type='navigate' onClick={() => navigate('/test')}>찾으러 가기</PrimaryButton>
-            ) : (
-                <>
-                <PrimaryButton type='navigate' onClick={() => navigate('/login')}>로그인</PrimaryButton>
-                <PrimaryButton type='navigate' onClick={() => navigate('/signup')}>회원가입</PrimaryButton>
-                </>
-            )}
-        </Container>
-    )
-}
+  // 로그인 + 테스트 완료한 사용자는 즉시 마이페이지로 이동
+  if (isAuthenticated && hasCompletedTest) {
+    return <Navigate to="/mypage" />;
+  }
+
+  return (
+    <Container>
+      {isAuthenticated && !hasCompletedTest ? (
+        <PrimaryButton type="navigate" onClick={() => navigate('/test')}>
+          찾으러 가기
+        </PrimaryButton>
+      ) : (
+        <>
+          <PrimaryButton type="navigate" onClick={() => navigate('/login')}>
+            로그인
+          </PrimaryButton>
+          <PrimaryButton type="navigate" onClick={() => navigate('/signup')}>
+            회원가입
+          </PrimaryButton>
+        </>
+      )}
+    </Container>
+  );
+};
 
 export default LandingContainer;

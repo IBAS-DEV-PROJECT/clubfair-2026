@@ -34,5 +34,6 @@ export const queryKeys = {
     dashboard: () => ['admin', 'dashboard'] as const,
     userSearch: (params: { phoneLast4: string }) =>
       ['admin', 'userSearch', { phoneLast4: params.phoneLast4 }] as const,
+    clubfairSettings: () => ['admin', 'clubfair-settings'] as const,
   },
 };

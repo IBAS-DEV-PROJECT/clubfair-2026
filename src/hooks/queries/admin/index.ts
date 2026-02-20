@@ -1,0 +1,1 @@
+export { useClubFairSettingsQuery } from './useClubFairSettingsQuery';
