@@ -33,7 +33,6 @@ const ToggleSwitch = styled.button<{ $isOn: boolean; $disabled: boolean }>`
   height: 28px;
   background: ${({ $isOn }) => ($isOn ? colors.headerBackground : colors.material)};
   border: 2px solid ${colors.borderDarkest};
-  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
   box-shadow:
     inset -1px -1px 0 ${colors.borderLightest},

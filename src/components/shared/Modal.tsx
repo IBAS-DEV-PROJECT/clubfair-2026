@@ -20,13 +20,11 @@ const ModalOverlay = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  cursor: pointer;
 `;
 
 const StyledWindow = styled(Window)<{ $width: number }>`
   width: 90vw;
   max-width: ${({ $width }) => $width}px;
-  cursor: default;
 `;
 
 const CloseIcon = styled.span`
@@ -72,7 +70,6 @@ const CloseButton = styled.button`
   padding: 0;
   border: 1px solid ${colors.borderDarkest};
   background: ${colors.divider};
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
