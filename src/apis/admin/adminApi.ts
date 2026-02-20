@@ -57,6 +57,24 @@ export interface GrantDotoriResponse {
   action: Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
 }
 
+export interface EventDrawUser {
+  user_id: string;
+  name: string;
+  phone: string; // 전화번호 (예: 01012345678)
+}
+
+export interface EventPrizeWinner {
+  rank: number; // 1, 2, 3
+  prize_name: string; // "치킨", "베라 파인트", "메가 아아"
+  winners: EventDrawUser[];
+}
+
+export interface DrawEventResponse {
+  draw_id: string;
+  drawn_at: string;
+  prizes: EventPrizeWinner[];
+}
+
 // ===== Mock 데이터 =====
 const MOCK_ADMIN_PIN = '1234'; // /admin PIN
 const MOCK_SUPER_ADMIN_PIN = '5678'; // /admin/setting PIN
@@ -92,6 +110,23 @@ const MOCK_ADMIN_USERS: AdminUserSearchItem[] = [
     dotori: 42,
   },
 ];
+
+// 추첨 가능한 유저 목록 (응모한 사람들)
+const MOCK_DRAWABLE_USERS: EventDrawUser[] = [
+  { user_id: 'user_001', name: '김철수', phone: '01012341234' },
+  { user_id: 'user_002', name: '이영희', phone: '01023452345' },
+  { user_id: 'user_003', name: '박민수', phone: '01034563456' },
+  { user_id: 'user_004', name: '최지은', phone: '01045674567' },
+  { user_id: 'user_005', name: '정다은', phone: '01056785678' },
+  { user_id: 'user_006', name: '강태현', phone: '01067896789' },
+  { user_id: 'user_007', name: '윤서아', phone: '01078907890' },
+  { user_id: 'user_008', name: '임준호', phone: '01089018901' },
+  { user_id: 'user_009', name: '한예린', phone: '01090129012' },
+  { user_id: 'user_010', name: '송민지', phone: '01011223344' },
+];
+
+// 추첨 결과 저장용
+let MOCK_DRAW_RESULT: DrawEventResponse | null = null;
 
 // ===== API 함수 =====
 export async function verifyAdminPin(
@@ -193,5 +228,63 @@ export async function updateClubFairSettings(
 
       resolve({ ...MOCK_CLUBFAIR_SETTINGS });
     }, 500);
+  });
+}
+
+// 추첨 가능한 유저 리스트 조회
+export async function getDrawableUsers(): Promise<EventDrawUser[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([...MOCK_DRAWABLE_USERS]);
+    }, 300);
+  });
+}
+
+// 이벤트 추첨 실행
+export async function drawEvent(): Promise<DrawEventResponse> {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // 추첨 대상이 7명 이상인지 확인
+      if (MOCK_DRAWABLE_USERS.length < 7) {
+        reject(new Error('추첨 대상이 최소 7명 이상이어야 합니다.'));
+        return;
+      }
+
+      // 랜덤 추첨
+      const shuffled = [...MOCK_DRAWABLE_USERS];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      // 1등 1명, 2등 2명, 3등 4명
+      const first = shuffled.slice(0, 1);
+      const second = shuffled.slice(1, 3);
+      const third = shuffled.slice(3, 7);
+
+      const result: DrawEventResponse = {
+        draw_id: `draw_${Date.now()}`,
+        drawn_at: new Date().toISOString(),
+        prizes: [
+          { rank: 1, prize_name: '치킨', winners: first },
+          { rank: 2, prize_name: '배스킨라빈스 파인트', winners: second },
+          { rank: 3, prize_name: '메가커피 아이스 아메리카노', winners: third },
+        ],
+      };
+
+      // 결과 저장
+      MOCK_DRAW_RESULT = result;
+
+      resolve(result);
+    }, 800);
+  });
+}
+
+// 추첨 결과 조회
+export async function getDrawResult(): Promise<DrawEventResponse | null> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(MOCK_DRAW_RESULT);
+    }, 300);
   });
 }
