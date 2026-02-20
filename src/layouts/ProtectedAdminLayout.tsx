@@ -8,14 +8,15 @@ interface ProtectedAdminLayoutProps {
   requiredRole: AdminRole;
 }
 
-const StyledContainer = styled.div`
-  min-height: calc(100vh - 88px);
+const StyledContainer = styled.div<{ $isAuthScreen: boolean }>`
+  height: calc(100vh - 88px);
   box-sizing: border-box;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: ${({ $isAuthScreen }) => ($isAuthScreen ? 'center' : 'flex-start')};
+  overflow-y: auto;
 `;
 
 // Role에 따른 인증 타이틀 자동 결정
@@ -43,14 +44,14 @@ const ProtectedAdminLayout = ({ requiredRole }: ProtectedAdminLayoutProps) => {
 
   if (!hasPermission()) {
     return (
-      <StyledContainer>
+      <StyledContainer $isAuthScreen={true}>
         <PinAuthContainer title={getAuthTitle(requiredRole)} />
       </StyledContainer>
     );
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer $isAuthScreen={false}>
       <Outlet />
     </StyledContainer>
   );
