@@ -3,7 +3,7 @@ import { useUserAuthStore } from '../../stores/useUserAuthStore';
 import { supabase } from '../../apis/auth/authApi';
 import { queryKeys } from '../queryKeys';
 
-const useUserQuery = () => {
+const useUserAuthQuery = () => {
   const { user } = useUserAuthStore();
 
   return useQuery({
@@ -16,4 +16,4 @@ const useUserQuery = () => {
   });
 };
 
-export default useUserQuery;
+export default useUserAuthQuery;

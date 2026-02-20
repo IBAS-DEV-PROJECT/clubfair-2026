@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { Hourglass } from 'react95';
 import { useUserAuthStore } from '../stores/useUserAuthStore';
-import useUserQuery from '../hooks/queries/useUserAuthQuery';
+import useUserAuthQuery from '../hooks/queries/useUserAuthQuery';
 
 interface ProtectedUserLayoutProps {
   requiredTest?: boolean;
@@ -10,7 +10,7 @@ interface ProtectedUserLayoutProps {
 
 const ProtectedUserLayout = ({ requiredTest = true }: ProtectedUserLayoutProps) => {
   const { isAuthenticated, loading, init } = useUserAuthStore();
-  const { data: userData, isFetching: isUserFetching } = useUserQuery();
+  const { data: userData, isFetching: isUserFetching } = useUserAuthQuery();
 
   useEffect(() => {
     init();

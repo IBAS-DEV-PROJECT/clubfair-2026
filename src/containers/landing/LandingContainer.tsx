@@ -2,7 +2,7 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { PrimaryButton } from '../../components/shared';
 import { useUserAuthStore } from '../../stores/useUserAuthStore';
-import useUserQuery from '../../hooks/queries/useUserAuthQuery';
+import useUserAuthQuery from '../../hooks/queries/useUserAuthQuery';
 
 const Container = styled.div`
   display: flex;
@@ -14,7 +14,7 @@ const Container = styled.div`
 const LandingContainer = () => {
   const navigate = useNavigate();
   const { isAuthenticated, loading } = useUserAuthStore();
-  const { data: userData } = useUserQuery();
+  const { data: userData } = useUserAuthQuery();
 
   const hasCompletedTest = (userData?.answers?.length ?? 0) > 0;
 
