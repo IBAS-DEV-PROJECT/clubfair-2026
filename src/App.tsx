@@ -15,36 +15,40 @@ import {
 } from './pages';
 import { Footer, Header } from './layouts';
 import DesktopBlocker from './components/shared/DesktopBlocker';
-import { useUserAuthStore } from './stores/useUserAuthStore';
-import { useEffect } from 'react';
+import ProtectedUserLayout from './layouts/ProtectedUserLayout';
 
 const App = () => {
   const isDesktop = useMediaQuery({ query: `(min-width: ${breakpoints.laptop})` });
-  // 로컬 스토리지에서 로그인 세션 읽어오기 (user, isAuthenticated)
-  const init = useUserAuthStore((state) => state.init);
-
-  useEffect(()=> {
-    init();
-  }, []);
 
   return (
     <>
       <GlobalStyles />
       <ThemeProvider theme={original}>
-        {/* 1024px 이상부터 차단 */}
         {isDesktop ? (
           <DesktopBlocker />
         ) : (
           <Router>
             <Header />
             <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/test" element={<TestPage />} />
-              <Route path="/my" element={<MyPage />} />
-              <Route path="/admin" element={<AdminPage />} />
-              <Route path="/admin/setting" element={<SettingPage />} />
+              {/* User 페이지 */}
+              <Route element={<ProtectedUserLayout />}>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/login" element={<LoginPage />} />
+
+                {/* 로그인만 필요 */}
+                <Route element={<ProtectedUserLayout requiredTest={false} />}>
+                  <Route path="/test" element={<TestPage />} />
+                </Route>
+
+                {/* 로그인 + 테스트 완료 필요 */}
+                <Route element={<ProtectedUserLayout />}>
+                  <Route path="/mypage" element={<MyPage />} />
+                </Route>
+                
+                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/admin/setting" element={<SettingPage />} />
+              </Route>
             </Routes>
             <Footer />
           </Router>
