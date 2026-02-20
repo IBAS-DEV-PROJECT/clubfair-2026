@@ -8,7 +8,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase env is missing: VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY');
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // ===== 타입 정의 =====
 export interface LoginParams {
