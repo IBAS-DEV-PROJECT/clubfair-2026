@@ -57,7 +57,10 @@ const PrimaryButton = (props: PrimaryButtonProps) => {
       } = props;
 
       return (
-        <Button type="submit" disabled={disabled || isPending} fullWidth={fullWidth}>
+        <Button type="submit" 
+          disabled={disabled || isPending} 
+          {...(fullWidth && { fullWidth: true })}  // true일 때만 전달
+        >
           {isPending ? loadingText : children}
         </Button>
       );
