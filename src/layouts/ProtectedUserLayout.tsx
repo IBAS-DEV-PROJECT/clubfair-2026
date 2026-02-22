@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { Hourglass } from 'react95';
 import { useUserAuthStore } from '../stores/useUserAuthStore';
@@ -9,12 +8,8 @@ interface ProtectedUserLayoutProps {
 }
 
 const ProtectedUserLayout = ({ requiredTest = true }: ProtectedUserLayoutProps) => {
-  const { isAuthenticated, loading, init } = useUserAuthStore();
+  const { isAuthenticated, loading } = useUserAuthStore();
   const { data: userData, isFetching: isUserFetching } = useUserAuthQuery();
-
-  useEffect(() => {
-    init();
-  }, []);
 
   if (loading || isUserFetching) {
     return (
@@ -25,10 +20,12 @@ const ProtectedUserLayout = ({ requiredTest = true }: ProtectedUserLayoutProps) 
     );
   }
 
+  // 미로그인 사용자가 test, my 페이지에 접근할 경우 랜딩 페이지로 리다이렉트
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
+  // 테스트 미완료 사용자가 my 페이지에 접근할 경우 테스트 페이지로 리다이렉트
   if (requiredTest && !(userData?.answers && userData.answers.length > 0)) {
     return <Navigate to="/test" replace />;
   }
