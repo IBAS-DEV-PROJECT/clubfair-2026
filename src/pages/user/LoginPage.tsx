@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   justify-content: flex-start;
   align-items: center;
   padding: 40px 20px;
-  margin-top: 40px;
+  margin-top: 180px;
 `;
 
 const FormWindow = styled(Window)`
