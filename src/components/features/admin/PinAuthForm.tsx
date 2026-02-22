@@ -1,7 +1,7 @@
 import { TextInput } from 'react95';
 import styled from 'styled-components';
-import PrimaryButton from '../shared/PrimaryButton';
-import { colors } from '../../styles/colors';
+import PrimaryButton from '../../shared/PrimaryButton';
+import { colors } from '../../../styles/colors';
 
 interface PinAuthFormProps {
   title: string;

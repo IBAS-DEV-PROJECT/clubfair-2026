@@ -5,7 +5,11 @@ import { type UpdateClubFairSettingsParams } from '../../apis/admin/adminApi';
 import { useClubFairStatus } from '../../hooks/useClubFairStatus';
 import { useClubFairSettingsQuery } from '../../hooks/queries/admin/useClubFairSettingsQuery';
 import { useUpdateClubFairSettingsMutation } from '../../hooks/mutations/admin/useUpdateClubFairSettingsMutation';
-import { CurrentStatusBanner, DevelopModeToggle, TimeSettingCard } from '../../components/admin';
+import {
+  CurrentStatusBanner,
+  DevelopModeToggle,
+  TimeSettingCard,
+} from '../../components/features/admin';
 
 const CenteredContainer = styled.div`
   display: flex;

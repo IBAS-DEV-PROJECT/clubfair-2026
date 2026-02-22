@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Hourglass } from 'react95';
 import styled from 'styled-components';
 import { drawEvent, getDrawableUsers, getDrawResult } from '../../apis/admin/adminApi';
-import EventDrawCard from '../../components/admin/EventDrawCard';
+import EventDrawCard from '../../components/features/admin/EventDrawCard';
 import { useClubFairStatus } from '../../hooks/useClubFairStatus';
 import { useClubFairSettingsQuery } from '../../hooks/queries/admin';
 import type { EventPrizeWinner } from '../../apis/admin/adminApi';

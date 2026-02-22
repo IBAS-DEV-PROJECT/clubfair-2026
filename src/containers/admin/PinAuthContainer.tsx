@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { verifyAdminPin } from '../../apis/admin/adminApi';
 import { useAdminStore } from '../../stores/useAdminStore';
-import PinAuthForm from '../../components/admin/PinAuthForm';
+import PinAuthForm from '../../components/features/admin/PinAuthForm';
 
 interface PinAuthContainerProps {
   title?: string;

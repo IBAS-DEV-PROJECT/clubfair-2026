@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { colors } from '../../styles/colors';
-import { ClubFairStatus } from '../../constants';
+import { colors } from '../../../styles/colors';
+import { ClubFairStatus } from '../../../constants';
 
 interface CurrentStatusBannerProps {
   currentStatus: ClubFairStatus;

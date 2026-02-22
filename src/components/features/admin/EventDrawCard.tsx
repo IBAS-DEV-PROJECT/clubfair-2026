@@ -1,8 +1,8 @@
 import { Button } from 'react95';
 import styled from 'styled-components';
-import { colors } from '../../styles/colors';
-import { EventPrizeWinner } from '../../apis/admin/adminApi';
-import { ClubFairStatus } from '../../constants/clubFairStatus';
+import { colors } from '../../../styles/colors';
+import { EventPrizeWinner } from '../../../apis/admin/adminApi';
+import { ClubFairStatus } from '../../../constants/clubFairStatus';
 
 interface EventDrawCardProps {
   drawableCount: number;
