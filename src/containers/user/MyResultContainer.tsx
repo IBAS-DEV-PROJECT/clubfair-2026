@@ -7,6 +7,7 @@ import { enterEvent, getMyActions, getMyMatches, getMyUser } from '../../apis/us
 import { queryKeys } from '../../hooks/queryKeys';
 import { formatPostgresDateTime } from '../../utils/date';
 import { ActionDetailLabel } from '../../constants';
+import { useTestResultStore } from '../../stores/useTestResultStore';
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -19,6 +20,8 @@ const LoadingContainer = styled.div`
 
 const MyResultContainer = () => {
   const queryClient = useQueryClient();
+  const { result: testResult, clearResult } = useTestResultStore();
+  const isFromTest = !!testResult;
 
   // 유저 정보 조회
   const { data: myUser, isFetching: isUserFetching } = useQuery({
@@ -56,19 +59,25 @@ const MyResultContainer = () => {
     );
   }
 
-  // Early return 처리할지 말지 고민 중
-  const firstMatch = myMatches?.[0];
-  const dotori = myUser?.dotori ?? 0;
-  const score = firstMatch?.score ?? 0;
-  const instagramId = firstMatch?.partner_instagram_id ?? '-';
+  // 테스트 직후에는 testResult 값 사용 
+  const dotori = isFromTest ? testResult!.dotori : (myUser?.dotori ?? 0);
+  const score = isFromTest ? testResult!.score : (myMatches?.[0]?.score ?? 0);
+  const instagramId = isFromTest ? testResult!.partner_instagram_id : (myMatches?.[0]?.partner_instagram_id ?? '-');
 
-  const history =
-    myActions?.map((item, index) => ({
-      id: `${item.created_at}-${index}`,
-      label: ActionDetailLabel[item.detail],
-      change: item.change,
-      createdAt: formatPostgresDateTime(item.created_at),
-    })) ?? [];
+  const history = isFromTest
+    ? testResult!.dotori_history.map((item, index) => ({
+        id: `${item.created_at}-${index}`,
+        label: ActionDetailLabel[item.detail],
+        change: item.change,
+        createdAt: formatPostgresDateTime(item.created_at),
+      }))
+    : (myActions?.map((item, index) => ({
+        id: `${item.created_at}-${index}`,
+        label: ActionDetailLabel[item.detail],
+        change: item.change,
+        createdAt: formatPostgresDateTime(item.created_at),
+      })) ?? []);
+
 
   return (
     <>
@@ -79,7 +88,10 @@ const MyResultContainer = () => {
         type="apply"
         dotori={dotori}
         isPending={entryMutation.isPending}
-        onClick={() => entryMutation.mutate()}
+        onClick={() => {
+          clearResult();
+          entryMutation.mutate();
+        }}
       >
         응모하기
       </PrimaryButton>
