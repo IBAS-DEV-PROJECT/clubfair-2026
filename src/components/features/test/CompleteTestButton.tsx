@@ -1,12 +1,12 @@
 import { Button, Hourglass } from 'react95';
 
-interface TestSubmitButtonProps {
+interface CompleteTestbuttonProps {
   onClick: () => void;
   isPending?: boolean;
   disabled?: boolean;
 }
 
-const TestSubmitButton = ({ onClick, isPending = false, disabled = false }: TestSubmitButtonProps) => {
+const CompleteTestbutton = ({ onClick, isPending = false, disabled = false }: CompleteTestbuttonProps) => {
   return (
     <Button
       fullWidth
@@ -18,4 +18,4 @@ const TestSubmitButton = ({ onClick, isPending = false, disabled = false }: Test
   );
 };
 
-export default TestSubmitButton;
+export default CompleteTestbutton;

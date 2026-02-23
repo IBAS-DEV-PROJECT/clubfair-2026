@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { submitTestAnswers } from '../../apis/test/testApi';
 import { TEST_QUESTIONS } from '../../constants/testQuestions';
 import QuestionCard from '../../components/features/test/QuestionCard';
-import { TestSubmitButton } from '../../components/features/test';
+import { CompleteTestButton } from '../../components/features/test';
 import { useTestResultStore } from '../../stores/useTestResultStore';
 
 const FormWrapper = styled.div`
@@ -83,7 +83,7 @@ const TestContainer = () => {
       />
     <ButtonArea>
         {isLastQuestion && isAllAnswered && (
-            <TestSubmitButton
+            <CompleteTestButton
                 onClick={handleSubmit}
                 isPending={submitMutation.isPending}
                 disabled={!isAllAnswered}
