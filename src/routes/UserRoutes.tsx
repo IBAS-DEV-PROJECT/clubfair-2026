@@ -18,10 +18,11 @@ const UserRoutes = () => {
             <Route path="/signup" element={<SignUpPage />}/>
             <Route path="/login" element={<LoginPage />}/>
 
-            {/* 로그인 필요 (테스트 미완료도 접근 가능) */}
-            <Route element={<ProtectedUserLayout requiredTest={false} />}>
+            {/* 로그인 필요 (테스트 미완료도 접근 가능) - 개발 중일 때 아래 3줄 주석 */}
+            {/* <Route element={<ProtectedUserLayout requiredTest={false} />}>
                 <Route path="/test" element={<TestPage />} />
-            </Route>
+            </Route> */}
+            <Route path="/test" element={<TestPage />} />
 
             {/* 로그인 + 테스트 완료 필요 */}
             <Route element={<ProtectedUserLayout />}>
