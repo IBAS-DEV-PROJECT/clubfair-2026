@@ -42,6 +42,7 @@ export interface SearchUsersByPhoneLast4Params {
 export interface AdminUserSearchItem {
   user_id: string;
   name: string;
+  email: string;
   phone_last4: string;
   dotori: number;
 }
@@ -100,12 +101,14 @@ const MOCK_ADMIN_USERS: AdminUserSearchItem[] = [
   {
     user_id: 'user_001',
     name: '김철수',
+    email: 'chulsoo@example.com',
     phone_last4: '9243',
     dotori: 3,
   },
   {
     user_id: 'user_002',
     name: '홍길동',
+    email: 'hong@example.com',
     phone_last4: '1111',
     dotori: 42,
   },
