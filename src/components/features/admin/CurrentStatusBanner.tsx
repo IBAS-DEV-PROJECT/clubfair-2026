@@ -21,18 +21,31 @@ const StyledLabel = styled.div`
   font-size: 14px;
   margin-bottom: 8px;
   opacity: 0.9;
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 `;
 
 const StyledValue = styled.div`
   font-size: 32px;
   font-weight: bold;
   letter-spacing: 2px;
+
+  @media (max-width: 480px) {
+    font-size: 24px;
+    letter-spacing: 1px;
+  }
 `;
 
 const StyledTime = styled.div`
   font-size: 12px;
   margin-top: 8px;
   opacity: 0.8;
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+  }
 `;
 
 const CurrentStatusBanner = ({ currentStatus }: CurrentStatusBannerProps) => {
