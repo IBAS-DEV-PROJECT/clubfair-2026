@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Button, TextInput } from 'react95';
-import { colors } from '../../styles/colors';
-import { toDateTimeLocalValue } from '../../utils/date';
+import { colors } from '../../../styles/colors';
+import { toDateTimeLocalValue } from '../../../utils/date';
 
 interface TimeSettingCardProps {
   preEndTime: string;
