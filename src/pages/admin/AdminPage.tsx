@@ -1,5 +1,14 @@
+import DashboardContainer from '../../containers/admin/DashboardContainer';
+import UserSearchContainer from '../../containers/admin/UserSearchContainer';
+import AdminContentWrapper from '../../components/features/admin/AdminContentWrapper';
+
 const AdminPage = () => {
-  return <>{/* TODO: 여기에 컨테이너 추가 예정 */}</>;
+  return (
+    <AdminContentWrapper $variant="dashboard">
+      <DashboardContainer />
+      <UserSearchContainer />
+    </AdminContentWrapper>
+  );
 };
 
 export default AdminPage;
