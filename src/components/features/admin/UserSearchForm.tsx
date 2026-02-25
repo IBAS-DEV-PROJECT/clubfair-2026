@@ -13,6 +13,11 @@ const SearchSection = styled.div`
   display: flex;
   gap: 8px;
   align-items: flex-end;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 const InputGroup = styled.div`
@@ -26,6 +31,10 @@ const Label = styled.label`
   font-size: 12px;
   font-weight: bold;
   color: ${colors.canvasText};
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+  }
 `;
 
 const UserSearchForm = ({ onSearch, isSearching, isGranting }: UserSearchFormProps) => {

@@ -1,21 +1,27 @@
+import { Button } from 'react95';
 import styled from 'styled-components';
 import { colors } from '../../../styles/colors';
 import { AdminUserSearchItem } from '../../../apis/admin/adminApi';
 
 interface UserSearchResultItemProps {
   user: AdminUserSearchItem;
-  isSelected: boolean;
-  onClick: () => void;
+  onGrantClick: () => void;
+  disabled?: boolean;
 }
 
-const ResultItem = styled.li<{ $isSelected: boolean }>`
+const ResultItem = styled.li`
   padding: 12px;
-  border: 2px solid
-    ${({ $isSelected }) => ($isSelected ? colors.headerBackground : colors.borderDark)};
-  background: ${({ $isSelected }) => ($isSelected ? colors.material : colors.canvas)};
+  border: 2px solid ${colors.borderDark};
+  background: ${colors.canvas};
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const UserInfo = styled.div`
@@ -28,27 +34,47 @@ const UserName = styled.span`
   font-size: 14px;
   font-weight: bold;
   color: ${colors.canvasText};
-`;
 
-const UserDetail = styled.span`
-  font-size: 12px;
-  color: ${colors.textMuted};
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
 `;
 
 const DotoriCount = styled.span`
   font-size: 16px;
   font-weight: bold;
   color: ${colors.canvasText};
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
 `;
 
-const UserSearchResultItem = ({ user, isSelected, onClick }: UserSearchResultItemProps) => {
+const Actions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    justify-content: space-between;
+  }
+`;
+
+const UserSearchResultItem = ({ user, onGrantClick, disabled }: UserSearchResultItemProps) => {
   return (
-    <ResultItem $isSelected={isSelected} onClick={onClick}>
+    <ResultItem>
       <UserInfo>
-        <UserName>{user.name}</UserName>
-        {/* <UserDetail>전화번호: ****-{user.phone_last4}</UserDetail> */}
+        <UserName>
+          {user.name} ({user.email})
+        </UserName>
       </UserInfo>
-      <DotoriCount>도토리: {user.dotori}개</DotoriCount>
+      <Actions>
+        <DotoriCount>{user.dotori}개</DotoriCount>
+        <Button disabled={disabled} onClick={onGrantClick}>
+          증정
+        </Button>
+      </Actions>
     </ResultItem>
   );
 };
