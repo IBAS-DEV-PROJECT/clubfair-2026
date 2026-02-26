@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { PrimaryButton } from '../../components/shared';
-import { login, supabase } from '../../apis/auth/authApi';
+import { supabase } from '../../apis/auth/authApi';
+import { useLoginMutation } from '../../hooks/mutations/auth';
 import { LoginPhoneInput, PasswordInput } from '../../components/features/auth';
 
 const StyledForm = styled.form`
@@ -14,16 +14,11 @@ const StyledForm = styled.form`
 
 const LoginContainer = () => {
   const navigate = useNavigate();
-
-  // 폼 입력 상태
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 
-  // 로그인 mutation
-  const loginMutation = useMutation({
-    mutationFn: login,
+  const loginMutation = useLoginMutation({
     onSuccess: async (data) => {
-      // 로그인 성공 후 사용자 정보 조회하여 테스트 완료 여부 확인
       const userId = data.user?.id;
       if (!userId) {
         navigate('/test');
@@ -36,17 +31,14 @@ const LoginContainer = () => {
         .eq('id', userId)
         .single();
 
-      // 테스트 완료 여부에 따라 리다이렉트
       const hasCompletedTest = (userData?.answers?.length ?? 0) > 0;
       if (hasCompletedTest) {
-        // 테스트 완료 시 마이페이지로 이동
         navigate('/my');
-        // 테스트 미완료 시 테스트 페이지로 이동
       } else {
         navigate('/test');
       }
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error(error);
       alert('로그인에 실패했습니다. 전화번호와 비밀번호를 확인해주세요.');
     },

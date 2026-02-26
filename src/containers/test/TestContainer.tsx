@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { submitTestAnswers } from '../../apis/test/testApi';
 import { TEST_QUESTIONS } from '../../constants/testQuestions';
 import QuestionCard from '../../components/features/test/QuestionCard';
 import { CompleteTestButton } from '../../components/features/test';
-import { useTestResultStore } from '../../stores/useTestResultStore';
+import { useSubmitTestMutation } from '../../hooks/mutations/test';
 
 const FormWrapper = styled.div`
   display: flex;
@@ -15,7 +13,7 @@ const FormWrapper = styled.div`
 `;
 
 const ButtonArea = styled.div`
-  height: 20px;  /* 제출하기 버튼 높이만큼 고정 */
+  height: 20px; /* 제출하기 버튼 높이만큼 고정 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,22 +24,24 @@ const TestContainer = () => {
   const navigate = useNavigate();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(Array(10).fill(null));
-  const { setResult } = useTestResultStore();
 
-  // 테스트 제출 mutation
-  const submitMutation = useMutation({
-    mutationFn: submitTestAnswers,
-    onSuccess: (data) => {
-        setResult(data);
-      navigate('/my');
+  const submitMutation = useSubmitTestMutation({
+    onSuccess: () => {
+      navigate('/my', { replace: true });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error(error);
-      alert('테스트 제출에 실패했습니다. 다시 시도해주세요.');
+      const message =
+        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        '테스트 제출에 실패했습니다. 다시 시도해 주세요.';
+      alert(message);
     },
   });
 
   const handleAnswerChange = (questionIndex: number, value: number) => {
+    // 제출 중에는 추가 입력 방지
+    if (submitMutation.isPending) return;
+
     const newAnswers = [...answers];
     newAnswers[questionIndex] = value;
     setAnswers(newAnswers);
@@ -57,7 +57,7 @@ const TestContainer = () => {
   const handleSubmit = () => {
     // 모든 질문에 답변했는지 확인
     if (answers.some((answer) => answer === null)) {
-      alert('모든 질문에 답변해주세요.');
+      alert('모든 질문에 답변해 주세요.');
       return;
     }
 
@@ -81,15 +81,16 @@ const TestContainer = () => {
         selectedAnswer={answers[currentQuestionIndex]}
         onAnswerChange={(value) => handleAnswerChange(currentQuestionIndex, value)}
       />
-    <ButtonArea>
+      <ButtonArea>
         {isLastQuestion && isAllAnswered && (
-            <CompleteTestButton
-                onClick={handleSubmit}
-                isPending={submitMutation.isPending}
-                disabled={!isAllAnswered}
-             />
-    )}
-    </ButtonArea>
+          <CompleteTestButton
+            onClick={handleSubmit}
+            isPending={submitMutation.isPending}
+            // 모든 답변이 완료된 상태에서, 로딩 중일 때만 비활성화
+            disabled={submitMutation.isPending}
+          />
+        )}
+      </ButtonArea>
     </FormWrapper>
   );
 };

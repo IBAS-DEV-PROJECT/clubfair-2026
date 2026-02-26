@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { verifyAdminPin } from '../../apis/admin/adminApi';
 import { useAdminStore } from '../../stores/useAdminStore';
+import { useVerifyAdminPinMutation } from '../../hooks/mutations/admin';
 import PinAuthForm from '../../components/features/admin/PinAuthForm';
 
 interface PinAuthContainerProps {
@@ -14,8 +13,7 @@ const PinAuthContainer = ({ title = 'Admin 인증', onSuccess }: PinAuthContaine
   const [errorMessage, setErrorMessage] = useState('');
   const setRole = useAdminStore((state) => state.setRole);
 
-  const verifyMutation = useMutation({
-    mutationFn: verifyAdminPin,
+  const verifyMutation = useVerifyAdminPinMutation({
     onSuccess: (data) => {
       setRole(data.role);
       onSuccess?.();

@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { PrimaryButton } from '../../components/shared';
-import { signup } from '../../apis/auth/authApi';
 import { Gender } from '../../constants';
 import {
   InstagramInput,
@@ -13,6 +11,7 @@ import {
   GenderSelector,
   PrivacyConsent,
 } from '../../components/features/auth';
+import { useSignUpMutation } from '../../hooks/mutations/auth';
 
 const StyledForm = styled.form`
   display: flex;
@@ -22,24 +21,19 @@ const StyledForm = styled.form`
 
 const SignUpContainer = () => {
   const navigate = useNavigate();
-
-  // 폼 입력 상태
   const [instagramId, setInstagramId] = useState('');
-  const [phone1, setPhone1] = useState(''); // 전화번호 중간 4자리
-  const [phone2, setPhone2] = useState(''); // 전화번호 끝 4자리
+  const [phone1, setPhone1] = useState('');
+  const [phone2, setPhone2] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [gender, setGender] = useState<Gender>(Gender.MALE);
-  const [privacyConsent, setPrivacyConsent] = useState(false); // 개인정보 동의 여부
+  const [privacyConsent, setPrivacyConsent] = useState(false);
 
-  // 회원가입 mutation
-  const signupMutation = useMutation({
-    mutationFn: signup,
+  const signupMutation = useSignUpMutation({
     onSuccess: () => {
-    // 회원가입 성공 시 로그인 페이지로 이동
       navigate('/login');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error(error);
     },
   });
@@ -53,7 +47,7 @@ const SignUpContainer = () => {
     }
 
     // 전화번호 01000000000 형태로 변환
-    const fullPhone = `010${phone1}${phone2}`
+    const fullPhone = `010${phone1}${phone2}`;
 
     signupMutation.mutate({
       instagram_id: instagramId,
@@ -76,8 +70,7 @@ const SignUpContainer = () => {
 
   return (
     <StyledForm onSubmit={handleSubmit}>
-
-    {/* 인스타 아이디 입력 */}
+      {/* 인스타 아이디 입력 */}
       <InstagramInput value={instagramId} onChange={setInstagramId} />
 
       {/* 전화번호 입력 */}
@@ -99,13 +92,9 @@ const SignUpContainer = () => {
 
       {/* 개인정보 동의 체크 */}
       <PrivacyConsent checked={privacyConsent} onChange={setPrivacyConsent} />
-        <PrimaryButton
-            type="submit"
-            disabled={!isFormValid}
-            isPending={signupMutation.isPending}
-            >
-            회원가입
-        </PrimaryButton>
+      <PrimaryButton type="submit" disabled={!isFormValid} isPending={signupMutation.isPending}>
+        회원가입
+      </PrimaryButton>
     </StyledForm>
   );
 };
