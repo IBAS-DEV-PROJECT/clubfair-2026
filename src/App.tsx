@@ -6,8 +6,7 @@ import { GlobalStyles } from './styles/globalTheme';
 import { breakpoints } from './styles/breakpoints';
 import { Footer, Header } from './layouts';
 import DesktopBlocker from './components/shared/DesktopBlocker';
-import UserRoutes from './routes/UserRoutes';
-import AdminRoutes from './routes/AdminRoutes';
+import { UserRoutes, AdminRoutes } from './routes';
 
 const App = () => {
   const isDesktop = useMediaQuery({ query: `(min-width: ${breakpoints.laptop})` });
