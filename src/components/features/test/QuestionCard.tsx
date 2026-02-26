@@ -9,6 +9,7 @@ interface QuestionCardProps {
   totalNumber: number;
   selectedAnswer: number | null;
   onAnswerChange: (value: number) => void;
+  disabled?: boolean;
 }
 
 const CardWrapper = styled.div`
@@ -41,6 +42,7 @@ const QuestionCard = ({
   totalNumber,
   selectedAnswer,
   onAnswerChange,
+  disabled,
 }: QuestionCardProps) => {
   return (
     <CardWrapper>
@@ -59,6 +61,7 @@ const QuestionCard = ({
               label={option.label}
               text={option.text}
               onChange={onAnswerChange}
+              disabled={disabled}
             />
           ))}
         </AnswerList>

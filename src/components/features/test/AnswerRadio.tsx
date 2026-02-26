@@ -8,6 +8,7 @@ interface AnswerRadioProps {
   label: string;
   text: string;
   onChange: (value: number) => void;
+  disabled?: boolean;
 }
 
 const RadioWrapper = styled.div`
@@ -15,7 +16,7 @@ const RadioWrapper = styled.div`
   align-items: flex-start;
   gap: 8px;
   padding: 8px;
-  
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
   }
@@ -30,13 +31,22 @@ const StyledLabel = styled.span`
   font-weight: bold;
 `;
 
-const AnswerRadio = ({ name, value, checked, label, text, onChange }: AnswerRadioProps) => {
+const AnswerRadio = ({
+  name,
+  value,
+  checked,
+  label,
+  text,
+  onChange,
+  disabled,
+}: AnswerRadioProps) => {
   return (
-    <RadioWrapper onClick={() => onChange(value)}>
+    <RadioWrapper onClick={() => !disabled && onChange(value)}>
       <Radio
         name={name}
         value={value}
         checked={checked}
+        disabled={disabled}
         onChange={() => onChange(value)}
       />
       <RadioContent>
