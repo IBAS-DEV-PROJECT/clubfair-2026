@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { submitTestAnswers, type SubmitTestAnswersResponse } from '../../../apis/test/testApi';
+import { submitTestAnswers } from '../../../apis/test/testApi';
+import type { TestResult } from '../../../types/testResult';
 import { queryKeys } from '../../queryKeys';
 
 interface UseSubmitTestMutationOptions {
-  onSuccess?: (data: SubmitTestAnswersResponse) => void;
+  onSuccess?: (data: TestResult) => void;
   onError?: (error: Error) => void;
 }
 
