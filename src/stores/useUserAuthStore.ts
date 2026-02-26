@@ -5,13 +5,13 @@ import { supabase } from '../apis/auth/authApi';
 interface UserAuthStore {
   user: User | null;
   isAuthenticated: boolean;
-  loading: boolean; // 처음 세션 확인 + DB 조회 끝날 때까지 false
+  loading: boolean; // 처음 세션 확인 + DB 조회 끝날 때까지 true
   init: () => void;
 }
 
 export const useUserAuthStore = create<UserAuthStore>((set) => ({
   user: null,
-  isAuthenticated: false,
+  isAuthenticated: true,
   loading: true,
 
   init: () => {
