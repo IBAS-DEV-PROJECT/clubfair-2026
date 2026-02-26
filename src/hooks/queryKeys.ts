@@ -22,9 +22,7 @@ export const queryKeys = {
     session: () => ['auth', 'session'] as const,
   },
   user: {
-    myUser: () => ['user', 'myUser'] as const,
-    myActions: () => ['user', 'myActions'] as const,
-    myMatches: () => ['user', 'myMatches'] as const,
+    userResult: () => ['user', 'userResult'] as const,
     answers: (userId: string) => ['user', 'answers', { userId }] as const,
   },
   test: {
