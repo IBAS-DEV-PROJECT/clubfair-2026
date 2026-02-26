@@ -1,5 +1,6 @@
 import { ActionCategory, ActionDetail } from '../../constants';
 import type { User, UserAction } from '../../types/db';
+import type { TestResult } from '../../types/testResult';
 
 // ===== 타입 정의 =====
 export type MyUserSummary = Pick<User, 'id' | 'name' | 'dotori'>;
@@ -55,16 +56,19 @@ const MOCK_MY_MATCHES: MyMatchItem[] = [
 ];
 
 // ===== API 함수 =====
-export async function getMyUser(): Promise<MyUserSummary> {
-  return Promise.resolve(MOCK_MY_USER);
-}
-
-export async function getMyActions(): Promise<MyActionListItem[]> {
-  return Promise.resolve(MOCK_MY_ACTIONS);
-}
-
-export async function getMyMatches(): Promise<MyMatchItem[]> {
-  return Promise.resolve(MOCK_MY_MATCHES);
+export async function getUserResult(): Promise<TestResult> {
+  const match = MOCK_MY_MATCHES[0];
+  return Promise.resolve({
+    score: match?.score ?? 0,
+    partner_instagram_id: match?.partner_instagram_id ?? '-',
+    dotori: MOCK_MY_USER.dotori,
+    dotori_history: MOCK_MY_ACTIONS.slice(0, 10).map((a) => ({
+      category: a.category,
+      detail: a.detail,
+      change: a.change,
+      created_at: a.created_at,
+    })),
+  });
 }
 
 export async function enterEvent(params: EnterEventParams = {}): Promise<EnterEventResponse> {

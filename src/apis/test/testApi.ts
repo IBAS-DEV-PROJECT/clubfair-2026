@@ -1,18 +1,9 @@
 import { ActionCategory, ActionDetail } from '../../constants';
-import type { UserAction } from '../../types/db';
+import type { TestResult, DotoriHistoryItem } from '../../types/testResult';
 
 // ===== 타입 정의 =====
 export interface SubmitTestAnswersParams {
   answers: number[];
-}
-
-export type DotoriHistoryItem = Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
-
-export interface SubmitTestAnswersResponse {
-  score: number;
-  partner_instagram_id: string;
-  dotori: number;
-  dotori_history: DotoriHistoryItem[];
 }
 
 // ===== Mock 데이터 =====
@@ -30,9 +21,7 @@ const MOCK_DOTORI_HISTORY: DotoriHistoryItem[] = [
 ];
 
 // ===== API 함수 =====
-export async function submitTestAnswers(
-  params: SubmitTestAnswersParams,
-): Promise<SubmitTestAnswersResponse> {
+export async function submitTestAnswers(params: SubmitTestAnswersParams): Promise<TestResult> {
   if (params.answers.length !== 10) {
     throw new Error('테스트 응답은 10개여야 합니다.');
   }
