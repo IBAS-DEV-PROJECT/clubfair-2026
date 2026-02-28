@@ -1,14 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
 import type { Gender } from '../../constants';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase env is missing: VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY');
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { supabase } from '../../libs/supabase';
 
 // ===== 타입 정의 =====
 export interface LoginParams {

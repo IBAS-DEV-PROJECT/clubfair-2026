@@ -1,4 +1,4 @@
-import { supabase } from '../auth/authApi';
+import { supabase } from '../../libs/supabase';
 import type { TestResult } from '../../types/testResult';
 
 // ===== 타입 정의 =====

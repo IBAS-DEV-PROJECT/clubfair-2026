@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useUserAuthStore } from '../../stores/useUserAuthStore';
-import { supabase } from '../../apis/auth/authApi';
+import { supabase } from '../../libs/supabase';
 import { queryKeys } from '../queryKeys';
 
 const useUserAuthQuery = () => {

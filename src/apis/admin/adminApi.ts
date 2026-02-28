@@ -1,5 +1,6 @@
 import { ActionCategory, ActionDetail, AdminRole } from '../../constants';
 import type { UserAction } from '../../types/db';
+import { supabase } from '../../libs/supabase';
 
 // ===== 타입 정의 =====
 export interface ClubFairSettings {
@@ -77,9 +78,6 @@ export interface DrawEventResponse {
 }
 
 // ===== Mock 데이터 =====
-const MOCK_ADMIN_PIN = '123456'; // /admin PIN
-const MOCK_SUPER_ADMIN_PIN = '567890'; // /admin/setting PIN
-
 let MOCK_CLUBFAIR_SETTINGS: ClubFairSettings = {
   forceDevelopMode: false, // 개발 환경 초기값: true
   preEndTime: '2026-03-01T18:00:00+09:00', // PRE 종료 = MAIN 시작
@@ -135,24 +133,23 @@ let MOCK_DRAW_RESULT: DrawEventResponse | null = null;
 export async function verifyAdminPin(
   params: VerifyAdminPinParams,
 ): Promise<VerifyAdminPinResponse> {
-  // ADMIN PIN 확인
-  if (params.pin === MOCK_ADMIN_PIN) {
-    return Promise.resolve({
-      success: true,
-      role: AdminRole.ADMIN,
-    });
+  const { data, error } = await supabase.functions.invoke('admin-auth', {
+    body: { pin: params.pin },
+  });
+
+  if (error) {
+    throw new Error(error.message ?? 'PIN이 일치하지 않습니다.');
   }
 
-  // SUPER_ADMIN PIN 확인
-  if (params.pin === MOCK_SUPER_ADMIN_PIN) {
-    return Promise.resolve({
-      success: true,
-      role: AdminRole.SUPER_ADMIN,
-    });
+  const result = data as { success?: boolean; role?: string; error?: string } | null;
+  if (
+    result?.success &&
+    (result.role === AdminRole.ADMIN || result.role === AdminRole.SUPER_ADMIN)
+  ) {
+    return { success: true, role: result.role as VerifyAdminPinResponse['role'] };
   }
 
-  // PIN 불일치
-  throw new Error('PIN이 일치하지 않습니다.');
+  throw new Error(result?.error ?? 'PIN이 일치하지 않습니다.');
 }
 
 export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
