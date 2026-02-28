@@ -15,13 +15,19 @@ export const useUserAuthStore = create<UserAuthStore>((set) => ({
   loading: true,
 
   init: () => {
-    // 로컬 스토리지에서 읽어오기
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const updateFromSession = (session: { user: User | null } | null) => {
       set({
         user: session?.user ?? null,
         isAuthenticated: !!session?.user,
         loading: false,
       });
+    };
+
+    // 초기 세션 + 이후 로그인/로그아웃/토큰 갱신 시 스토어 동기화
+    supabase.auth.getSession().then(({ data: { session } }) => updateFromSession(session));
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      updateFromSession(session);
     });
   },
 }));
