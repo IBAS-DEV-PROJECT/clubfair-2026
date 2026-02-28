@@ -54,9 +54,9 @@ const PinAuthForm = ({
           id="pin"
           type="password"
           value={pin}
-          onChange={(e) => onPinChange(e.target.value)}
-          placeholder="4자리 PIN"
-          maxLength={4}
+          onChange={(e) => onPinChange(e.target.value.replace(/\D/g, '').slice(0, 6))}
+          placeholder="6자리 PIN"
+          maxLength={6}
           disabled={isPending}
           fullWidth
         />

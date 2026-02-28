@@ -1,3 +1,4 @@
+export { default as EmailInput } from './EmailInput';
 export { default as InstagramInput } from './InstagramInput';
 export { default as PhoneInput } from './PhoneInput';
 export { default as LoginPhoneInput } from './LoginPhoneInput';

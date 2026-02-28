@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { PrimaryButton } from '../../components/shared';
 import { supabase } from '../../apis/auth/authApi';
 import { useLoginMutation } from '../../hooks/mutations/auth';
-import { LoginPhoneInput, PasswordInput } from '../../components/features/auth';
+import { EmailInput, PasswordInput } from '../../components/features/auth';
 
 const StyledForm = styled.form`
   display: flex;
@@ -14,7 +14,7 @@ const StyledForm = styled.form`
 
 const LoginContainer = () => {
   const navigate = useNavigate();
-  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const loginMutation = useLoginMutation({
@@ -40,7 +40,7 @@ const LoginContainer = () => {
     },
     onError: (error: Error) => {
       console.error(error);
-      alert('로그인에 실패했습니다. 전화번호와 비밀번호를 확인해주세요.');
+      alert('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
     },
   });
 
@@ -48,18 +48,18 @@ const LoginContainer = () => {
     e.preventDefault();
 
     loginMutation.mutate({
-      phone,
+      email,
       password,
     });
   };
 
   // 입력값 유효성 검사
-  const isFormValid = phone.length === 11 && password.length === 4;
+  const isFormValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && password.length === 6;
 
   return (
     <StyledForm onSubmit={handleSubmit}>
-      {/* 전화번호 입력 */}
-      <LoginPhoneInput value={phone} onChange={setPhone} />
+      {/* 이메일 입력 */}
+      <EmailInput value={email} onChange={setEmail} />
 
       {/* 비밀번호 입력 */}
       <PasswordInput value={password} onChange={setPassword} />

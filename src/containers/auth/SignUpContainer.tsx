@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { PrimaryButton } from '../../components/shared';
 import { Gender } from '../../constants';
 import {
+  EmailInput,
   InstagramInput,
   PhoneInput,
   PasswordInput,
@@ -21,6 +22,7 @@ const StyledForm = styled.form`
 
 const SignUpContainer = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
   const [instagramId, setInstagramId] = useState('');
   const [phone1, setPhone1] = useState('');
   const [phone2, setPhone2] = useState('');
@@ -50,6 +52,7 @@ const SignUpContainer = () => {
     const fullPhone = `010${phone1}${phone2}`;
 
     signupMutation.mutate({
+      email,
       instagram_id: instagramId,
       phone: fullPhone,
       password,
@@ -61,10 +64,11 @@ const SignUpContainer = () => {
 
   // 입력값 유효성 검사
   const isFormValid =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
     instagramId.length >= 3 &&
     phone1.length === 4 &&
     phone2.length === 4 &&
-    password.length === 4 &&
+    password.length === 6 &&
     name.length > 0 &&
     privacyConsent;
 
@@ -80,6 +84,9 @@ const SignUpContainer = () => {
         onPhone1Change={setPhone1}
         onPhone2Change={setPhone2}
       />
+
+      {/* 이메일 입력 */}
+      <EmailInput value={email} onChange={setEmail} />
 
       {/* 비밀번호 입력 */}
       <PasswordInput value={password} onChange={setPassword} />

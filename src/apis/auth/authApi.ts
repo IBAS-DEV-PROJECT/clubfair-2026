@@ -12,11 +12,12 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // ===== 타입 정의 =====
 export interface LoginParams {
-  phone: string;
+  email: string;
   password: string;
 }
 
 export interface SignUpParams {
+  email: string;
   name: string;
   phone: string;
   password: string;
@@ -28,7 +29,7 @@ export interface SignUpParams {
 // ===== API 함수 =====
 export async function login(params: LoginParams) {
   const { data, error } = await supabase.auth.signInWithPassword({
-    phone: params.phone,
+    email: params.email,
     password: params.password,
   });
 
@@ -43,11 +44,12 @@ export async function logout() {
 
 export async function signup(params: SignUpParams) {
   const { data, error } = await supabase.auth.signUp({
-    phone: params.phone,
+    email: params.email,
     password: params.password,
     options: {
       data: {
         name: params.name,
+        phone: params.phone,
         instagram_id: params.instagram_id,
         gender: params.gender,
         privacy_consent: params.privacy_consent,

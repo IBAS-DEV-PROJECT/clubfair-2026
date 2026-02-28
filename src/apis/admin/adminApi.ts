@@ -77,8 +77,8 @@ export interface DrawEventResponse {
 }
 
 // ===== Mock 데이터 =====
-const MOCK_ADMIN_PIN = '1234'; // /admin PIN
-const MOCK_SUPER_ADMIN_PIN = '5678'; // /admin/setting PIN
+const MOCK_ADMIN_PIN = '123456'; // /admin PIN
+const MOCK_SUPER_ADMIN_PIN = '567890'; // /admin/setting PIN
 
 let MOCK_CLUBFAIR_SETTINGS: ClubFairSettings = {
   forceDevelopMode: true, // 개발 환경 초기값: true
