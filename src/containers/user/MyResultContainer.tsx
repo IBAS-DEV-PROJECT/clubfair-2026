@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Hourglass } from 'react95';
 import { DotoriCard, MatchedInstagramCard, MatchScoreCard } from '../../components/features/user';
 import { PrimaryButton } from '../../components/shared';
-import { useUserResultQuery } from '../../hooks/queries/useUserResultQuery';
+import useMyResultQuery from '../../hooks/queries/useMyResultQuery';
 import { useEnterEventMutation } from '../../hooks/mutations/user';
 import { formatPostgresDateTime } from '../../utils/date';
 import { ActionDetailLabel } from '../../constants';
@@ -17,7 +17,7 @@ const LoadingContainer = styled.div`
 `;
 
 const MyResultContainer = () => {
-  const { data: userResult, isFetching: isResultFetching } = useUserResultQuery();
+  const { data: userResult, isFetching: isResultFetching } = useMyResultQuery();
   const entryMutation = useEnterEventMutation();
 
   if (isResultFetching) {
@@ -38,8 +38,8 @@ const MyResultContainer = () => {
   }
 
   const dotori = userResult.dotori;
-  const score = userResult.score;
-  const instagramId = userResult.partner_instagram_id;
+  const score = userResult.score ?? 0;
+  const instagramId = userResult.partner_instagram_id ?? '';
   const history = userResult.dotori_history.map((item, index) => ({
     id: `${item.created_at}-${index}`,
     label: ActionDetailLabel[item.detail],
