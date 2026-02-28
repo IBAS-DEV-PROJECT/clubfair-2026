@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useUserAuthStore } from '../../stores/useUserAuthStore';
-import { supabase } from '../../apis/auth/authApi';
+import { supabase } from '../../libs/supabase';
 import { queryKeys } from '../queryKeys';
 
 /**
@@ -14,12 +14,12 @@ const useIsTestCompletedQuery = () => {
     queryKey: queryKeys.user.isTestCompleted(user?.id ?? ''),
     queryFn: async () => {
       const { data, error } = await supabase.rpc('is_tester_completed');
-      
+
       if (error) {
         console.error('is_tester_completed RPC 에러:', error);
         throw error;
       }
-      
+
       return data as boolean;
     },
     enabled: !!user, // 로그인 상태일 때만 실행
