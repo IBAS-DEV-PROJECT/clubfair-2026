@@ -37,8 +37,10 @@ const SignUpContainer = () => {
       navigate('/login');
     },
     onError: (error: Error) => {
-      console.error(error);
-      setErrorMessage('회원가입이 실패했습니다. 다시 시도해주세요.');
+      console.error('회원가입 에러 상세:', error);
+      // 에러 메시지를 더 자세히 표시
+      const errorMsg = error.message || '회원가입이 실패했습니다. 다시 시도해주세요.';
+      setErrorMessage(errorMsg);
     },
   });
 
