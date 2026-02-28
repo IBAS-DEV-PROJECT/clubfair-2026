@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { PrimaryButton } from '../../components/shared';
+import { PrimaryButton, AlertModal } from '../../components/shared';
 import { supabase } from '../../apis/auth/authApi';
 import { useLoginMutation } from '../../hooks/mutations/auth';
 import { EmailInput, PasswordInput } from '../../components/features/auth';
@@ -16,6 +16,7 @@ const LoginContainer = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const loginMutation = useLoginMutation({
     onSuccess: async (data) => {
@@ -40,7 +41,7 @@ const LoginContainer = () => {
     },
     onError: (error: Error) => {
       console.error(error);
-      alert('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+      setErrorMessage('로그인이 실패했습니다. 다시 시도해주세요.');
     },
   });
 
@@ -73,6 +74,11 @@ const LoginContainer = () => {
       >
         로그인
       </PrimaryButton>
+
+      {/* 에러 모달 */}
+      {errorMessage && (
+        <AlertModal message={errorMessage} onClose={() => setErrorMessage(null)} />
+      )}
     </StyledForm>
   );
 };

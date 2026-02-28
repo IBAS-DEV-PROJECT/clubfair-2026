@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { PrimaryButton } from '../../components/shared';
+import { PrimaryButton, AlertModal } from '../../components/shared';
 import { Gender } from '../../constants';
 import {
   EmailInput,
@@ -30,6 +30,7 @@ const SignUpContainer = () => {
   const [name, setName] = useState('');
   const [gender, setGender] = useState<Gender>(Gender.MALE);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const signupMutation = useSignUpMutation({
     onSuccess: () => {
@@ -37,6 +38,7 @@ const SignUpContainer = () => {
     },
     onError: (error: Error) => {
       console.error(error);
+      setErrorMessage('회원가입이 실패했습니다. 다시 시도해주세요.');
     },
   });
 
@@ -102,6 +104,11 @@ const SignUpContainer = () => {
       <PrimaryButton type="submit" disabled={!isFormValid} isPending={signupMutation.isPending}>
         회원가입
       </PrimaryButton>
+
+      {/* 에러 모달 */}
+      {errorMessage && (
+        <AlertModal message={errorMessage} onClose={() => setErrorMessage(null)} />
+      )}
     </StyledForm>
   );
 };
