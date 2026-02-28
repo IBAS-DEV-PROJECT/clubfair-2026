@@ -81,7 +81,7 @@ const MOCK_ADMIN_PIN = '123456'; // /admin PIN
 const MOCK_SUPER_ADMIN_PIN = '567890'; // /admin/setting PIN
 
 let MOCK_CLUBFAIR_SETTINGS: ClubFairSettings = {
-  forceDevelopMode: true, // 개발 환경 초기값: true
+  forceDevelopMode: false, // 개발 환경 초기값: true
   preEndTime: '2026-03-01T18:00:00+09:00', // PRE 종료 = MAIN 시작
   mainEndTime: '2026-03-02T18:00:00+09:00', // MAIN 종료 = AFTER 시작
   afterEndTime: '2026-03-10T23:59:00+09:00', // AFTER 종료 = CLOSED

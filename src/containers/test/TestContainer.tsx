@@ -5,6 +5,9 @@ import { TEST_QUESTIONS } from '../../constants/testQuestions';
 import QuestionCard from '../../components/features/test/QuestionCard';
 import { CompleteTestButton } from '../../components/features/test';
 import { useSubmitTestMutation } from '../../hooks/mutations/test';
+import { useClubFairStatus } from '../../hooks/useClubFairStatus';
+import { useClubFairSettingsQuery } from '../../hooks/queries/admin';
+import { ClubFairStatus } from '../../constants';
 
 const FormWrapper = styled.div`
   display: flex;
@@ -25,12 +28,26 @@ const TestContainer = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(Array(10).fill(null));
 
+  // ClubFair 상태 확인
+  const { data: settings } = useClubFairSettingsQuery();
+  const clubFairStatus = useClubFairStatus(settings);
+
   const submitMutation = useSubmitTestMutation({
     onSuccess: () => {
-      navigate('/my', { replace: true });
+      console.log('테스트 제출 성공!');
+      console.log('현재 ClubFair 상태:', clubFairStatus);
+      
+      // PRE 기간에는 사전테스트 완료 페이지로, 그 외에는 마이페이지로 이동
+      if (clubFairStatus === ClubFairStatus.PRE) {
+        console.log('/pre-test-complete로 이동');
+        navigate('/pre-test-complete', { replace: true });
+      } else {
+        console.log('/my로 이동');
+        navigate('/my', { replace: true });
+      }
     },
     onError: (error: Error) => {
-      console.error(error);
+      console.error('테스트 제출 에러:', error);
       const message =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
         '테스트 제출에 실패했습니다. 다시 시도해 주세요.';
@@ -55,12 +72,17 @@ const TestContainer = () => {
   };
 
   const handleSubmit = () => {
+    console.log('제출 버튼 클릭됨');
+    console.log('현재 답변:', answers);
+    
     // 모든 질문에 답변했는지 확인
     if (answers.some((answer) => answer === null)) {
       alert('모든 질문에 답변해 주세요.');
       return;
     }
 
+    console.log('테스트 제출 시작...');
+    
     // null이 아닌 것을 확인했으므로 타입 캐스팅
     submitMutation.mutate({
       answers: answers as number[],
