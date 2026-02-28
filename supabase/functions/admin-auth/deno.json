@@ -1,0 +1,12 @@
+{
+  "imports": {
+    "@supabase/functions-js": "jsr:@supabase/functions-js@^2",
+    "shared/": "../_shared/"
+  },
+  "compilerOptions": {
+    "lib": [
+      "deno.ns",
+      "deno.unstable"
+    ]
+  }
+}
