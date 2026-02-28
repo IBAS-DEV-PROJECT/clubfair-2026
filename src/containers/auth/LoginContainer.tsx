@@ -26,14 +26,16 @@ const LoginContainer = () => {
         return;
       }
 
-      const { data: userData } = await supabase
-        .from('users')
-        .select('answers')
-        .eq('id', userId)
-        .single();
+      // RPC 함수로 테스트 완료 여부 확인
+      const { data: isTestCompleted, error } = await supabase.rpc('is_tester_completed');
+      
+      if (error) {
+        console.error('is_tester_completed RPC 에러:', error);
+        navigate('/test');
+        return;
+      }
 
-      const hasCompletedTest = (userData?.answers?.length ?? 0) > 0;
-      if (hasCompletedTest) {
+      if (isTestCompleted) {
         navigate('/my');
       } else {
         navigate('/test');
