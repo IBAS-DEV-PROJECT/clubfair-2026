@@ -22,7 +22,7 @@ const LandingContainer = () => {
 
   // 로그인 + 테스트 완료한 사용자는 즉시 마이페이지로 이동
   if (isAuthenticated && hasCompletedTest) {
-    return <Navigate to="/mypage" />;
+    return <Navigate to="/my" />;
   }
 
   return (
