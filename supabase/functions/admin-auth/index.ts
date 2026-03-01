@@ -1,5 +1,6 @@
 import '@supabase/functions-js/edge-runtime.d.ts';
-import { corsHeaders, jsonResponse } from '../_shared/cors.ts';
+import { corsHeaders } from '../_shared/cors.ts';
+import { jsonResponse } from '../_shared/response.ts';
 
 declare const Deno: {
   serve: (handler: (req: Request) => Promise<Response> | Response) => void;
