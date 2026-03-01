@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useUserAuthStore } from '../../stores/useUserAuthStore';
-import { getMyResult } from '../../apis/user/myResultApi';
+import { getMyResult } from '../../apis/user/userApi';
 import { queryKeys } from '../queryKeys';
 
 /**
