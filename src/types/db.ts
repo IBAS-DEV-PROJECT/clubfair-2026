@@ -4,7 +4,7 @@
  * ==========================================
  */
 
-import type { Gender, ActionCategory, ActionDetail, ClubFairStatus } from '../constants';
+import type { Gender, ActionCategory, ActionDetail } from '../constants';
 
 export interface User {
   id: string;
@@ -39,8 +39,10 @@ export interface Match {
 
 export interface ClubFairSetting {
   id: number;
-  start_at: string;
-  end_at: string;
-  status: ClubFairStatus;
-  is_paused: boolean;
+  status: string;
+  force_develop_mode: boolean;
+  pre_end_time: string;
+  main_end_time: string;
+  after_end_time: string;
+  updated_at?: string;
 }
