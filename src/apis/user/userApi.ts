@@ -1,100 +1,79 @@
-import { ActionCategory, ActionDetail } from '../../constants';
-import type { User, UserAction } from '../../types/db';
-import type { TestResult } from '../../types/testResult';
+import { supabase } from '../../libs/supabase';
 
 // ===== 타입 정의 =====
-export type MyUserSummary = Pick<User, 'id' | 'name' | 'dotori'>;
-export type MyActionListItem = Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
-
-export interface MyMatchItem {
-  partner_instagram_id: string;
-  score: number;
+export interface DotoriHistoryItem {
+  category: 'MISSION' | 'PURCHASE';
+  detail: 'TEST' | 'FOLLOW' | 'STORY' | 'GAME1' | 'GAME2' | 'GAME3' | 'EVENT';
+  change: number;
+  created_at: string;
 }
 
-export interface EnterEventParams {
-  cost?: number;
+export interface MyResult {
+  score: number | null;
+  partner_instagram_id: string | null;
+  dotori: number;
+  dotori_history: DotoriHistoryItem[];
 }
 
 export interface EnterEventResponse {
+  status: string;
   dotori: number;
-  action: MyActionListItem;
 }
 
-// ===== Mock 데이터 =====
-const MOCK_MY_USER: MyUserSummary = {
-  id: 'user_me_001',
-  name: '홍길동',
-  dotori: 42,
-};
-
-const MOCK_MY_ACTIONS: MyActionListItem[] = [
-  {
-    category: ActionCategory.MISSION,
-    detail: ActionDetail.TEST,
-    change: 2,
-    created_at: '2026-02-12T10:00:00.000Z',
-  },
-  {
-    category: ActionCategory.MISSION,
-    detail: ActionDetail.STORY,
-    change: 1,
-    created_at: '2026-02-13T11:20:00.000Z',
-  },
-  {
-    category: ActionCategory.PURCHASE,
-    detail: ActionDetail.EVENT,
-    change: -5,
-    created_at: '2026-02-13T13:15:00.000Z',
-  },
-];
-
-const MOCK_MY_MATCHES: MyMatchItem[] = [
-  {
-    partner_instagram_id: 'clubfair_friend_101',
-    score: 97,
-  },
-];
+export interface EventResult {
+  is_winner: boolean;
+  rank?: number;
+  prize_name?: string;
+  message: string;
+}
 
 // ===== API 함수 =====
-export async function getUserResult(): Promise<TestResult> {
-  const match = MOCK_MY_MATCHES[0];
-  return Promise.resolve({
-    score: match?.score ?? 0,
-    partner_instagram_id: match?.partner_instagram_id ?? '-',
-    dotori: MOCK_MY_USER.dotori,
-    dotori_history: MOCK_MY_ACTIONS.slice(0, 10).map((a) => ({
-      category: a.category,
-      detail: a.detail,
-      change: a.change,
-      created_at: a.created_at,
-    })),
-  });
+/**
+ * 내 결과 조회
+ * - 매칭 점수
+ * - 매칭 상대 인스타 아이디
+ * - 도토리 개수
+ * - 도토리 내역 (전체, 최신순)
+ */
+export async function getMyResult(): Promise<MyResult> {
+  const { data, error } = await supabase.rpc('get_my_result');
+
+  if (error) {
+    console.error('get_my_result RPC 에러:', error);
+    throw error;
+  }
+
+  return data as MyResult;
 }
 
-export async function enterEvent(params: EnterEventParams = {}): Promise<EnterEventResponse> {
-  const cost = params.cost ?? 5;
+/**
+ * 이벤트 응모
+ * - 도토리 5개 차감
+ * - user_actions에 PURCHASE/EVENT 기록
+ */
+export async function enterEvent(): Promise<EnterEventResponse> {
+  const { data, error } = await supabase.rpc('enter_event');
 
-  if (cost <= 0) {
-    throw new Error('응모 비용은 1 이상이어야 합니다.');
+  if (error) {
+    console.error('enter_event RPC 에러:', error);
+    throw error;
   }
 
-  if (MOCK_MY_USER.dotori < cost) {
-    throw new Error('도토리가 부족합니다.');
+  return data as EnterEventResponse;
+}
+
+/**
+ * 이벤트 당첨 결과 조회
+ * - 당첨: rank와 prize_name 반환
+ * - 낙첨: 위로 메시지 반환
+ */
+export async function getMyEventResult(): Promise<EventResult> {
+  const { data, error } = await supabase.rpc('get_my_event_result');
+
+  if (error) {
+    console.error('get_my_event_result RPC 에러:', error);
+    throw error;
   }
 
-  MOCK_MY_USER.dotori -= cost;
-
-  const action: MyActionListItem = {
-    category: ActionCategory.PURCHASE,
-    detail: ActionDetail.EVENT,
-    change: -cost,
-    created_at: new Date().toISOString(),
-  };
-
-  MOCK_MY_ACTIONS.unshift(action);
-
-  return Promise.resolve({
-    dotori: MOCK_MY_USER.dotori,
-    action,
-  });
+  return data as EventResult;
 }
