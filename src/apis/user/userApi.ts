@@ -24,6 +24,13 @@ export interface EnterEventResponse {
   action: DotoriHistoryItem;
 }
 
+export interface EventResult {
+  is_winner: boolean;
+  rank?: number;
+  prize_name?: string;
+  message: string;
+}
+
 // ===== API 함수 =====
 /**
  * 내 결과 조회
@@ -52,4 +59,20 @@ export async function enterEvent(params: EnterEventParams = {}): Promise<EnterEv
 
   // TODO: Supabase RPC로 구현 필요
   throw new Error('Not implemented yet');
+}
+
+/**
+ * 이벤트 당첨 결과 조회
+ * - 당첨: rank와 prize_name 반환
+ * - 낙첨: 위로 메시지 반환
+ */
+export async function getMyEventResult(): Promise<EventResult> {
+  const { data, error } = await supabase.rpc('get_my_event_result');
+
+  if (error) {
+    console.error('get_my_event_result RPC 에러:', error);
+    throw error;
+  }
+
+  return data as EventResult;
 }
