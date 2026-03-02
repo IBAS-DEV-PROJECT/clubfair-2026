@@ -28,13 +28,51 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
 
+    if (!users || users.length === 0) {
+      return new Response(JSON.stringify({ users: [] }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const userIds = users.map((u) => u.id);
+
+    // 각 유저별 인스타 팔로우 / 스토리 인증 여부 조회
+    const { data: actions, error: actionsError } = await supabase
+      .from('user_actions')
+      .select('user_id, detail')
+      .in('user_id', userIds)
+      .eq('category', 'MISSION')
+      .in('detail', ['FOLLOW', 'STORY']);
+
+    if (actionsError) throw actionsError;
+
+    const actionMap = new Map<
+      string,
+      {
+        hasFollow: boolean;
+        hasStory: boolean;
+      }
+    >();
+
+    (actions ?? []).forEach((a) => {
+      const current = actionMap.get(a.user_id) ?? { hasFollow: false, hasStory: false };
+      if (a.detail === 'FOLLOW') current.hasFollow = true;
+      if (a.detail === 'STORY') current.hasStory = true;
+      actionMap.set(a.user_id, current);
+    });
+
     const result =
-      users?.map((u) => ({
-        user_id: u.id,
-        name: u.name,
-        email: u.email,
-        dotori: u.dotori ?? 0,
-      })) ?? [];
+      users.map((u) => {
+        const flags = actionMap.get(u.id) ?? { hasFollow: false, hasStory: false };
+        return {
+          user_id: u.id,
+          name: u.name,
+          email: u.email,
+          dotori: u.dotori ?? 0,
+          canGiveFollow: !flags.hasFollow,
+          canGiveStory: !flags.hasStory,
+        };
+      }) ?? [];
 
     return new Response(JSON.stringify({ users: result }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
