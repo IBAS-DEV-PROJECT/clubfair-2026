@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '../queryKeys';
-import { getUserResult } from '../../apis/user/userApi';
+import { getMyResult } from '../../apis/user/userApi';
 
 export function useUserResultQuery() {
   return useQuery({
     queryKey: queryKeys.user.userResult(),
-    queryFn: getUserResult,
+    queryFn: getMyResult,
     staleTime: 1000 * 60 * 5, // 5분
   });
 }
