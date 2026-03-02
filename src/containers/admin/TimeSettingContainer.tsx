@@ -59,21 +59,20 @@ const TimeSettingContainer = () => {
   // 설정 로드 시 로컬 상태 초기화
   useEffect(() => {
     if (settings) {
-      setForceDevelopMode(settings.forceDevelopMode);
-      setPreEndTime(settings.preEndTime);
-      setMainEndTime(settings.mainEndTime);
-      setAfterEndTime(settings.afterEndTime);
+      setForceDevelopMode(settings.forceDevelopMode ?? false);
+      setPreEndTime(settings.preEndTime ?? '');
+      setMainEndTime(settings.mainEndTime ?? '');
+      setAfterEndTime(settings.afterEndTime ?? '');
     }
   }, [settings]);
 
   // 수정 모드 토글 핸들러
   const handleEditToggle = () => {
     if (isEditMode && settings) {
-      // 취소 시: 원래 설정값으로 되돌림
-      setForceDevelopMode(settings.forceDevelopMode);
-      setPreEndTime(settings.preEndTime);
-      setMainEndTime(settings.mainEndTime);
-      setAfterEndTime(settings.afterEndTime);
+      setForceDevelopMode(settings.forceDevelopMode ?? false);
+      setPreEndTime(settings.preEndTime ?? '');
+      setMainEndTime(settings.mainEndTime ?? '');
+      setAfterEndTime(settings.afterEndTime ?? '');
       setErrorMessage('');
     }
     setIsEditMode(!isEditMode);

@@ -8,7 +8,7 @@ interface TimeSettingCardProps {
   mainEndTime: string;
   afterEndTime: string;
   isEditMode: boolean;
-  isDevelopMode: boolean; // DEVELOP 모드 여부
+  isDevelopMode: boolean;
   onPreEndTimeChange: (value: string) => void;
   onMainEndTimeChange: (value: string) => void;
   onAfterEndTimeChange: (value: string) => void;
@@ -122,7 +122,7 @@ const TimeSettingCard = ({
           </Button>
         ) : (
           <>
-            <Button onClick={onSave} disabled={isSaving || isDevelopMode} style={{ flex: 1 }}>
+            <Button onClick={onSave} disabled={isSaving} style={{ flex: 1 }}>
               {isSaving ? '저장 중...' : '저장'}
             </Button>
             <Button onClick={onEditToggle} disabled={isSaving} style={{ flex: 1 }}>
