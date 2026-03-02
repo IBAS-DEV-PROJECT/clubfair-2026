@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Hourglass } from 'react95';
 import styled from 'styled-components';
-import { drawEvent, getDrawableUsers, getDrawResult } from '../../apis/admin/adminApi';
+import { drawEvent, getEventDrawInfo } from '../../apis/admin/adminApi';
 import EventDrawCard from '../../components/features/admin/EventDrawCard';
 import { useClubFairStatus } from '../../hooks/useClubFairStatus';
 import { useClubFairSettingsQuery } from '../../hooks/queries/admin';
@@ -23,7 +23,6 @@ const Message = styled.p`
 `;
 
 const EventDrawContainer = () => {
-  const [drawableCount, setDrawableCount] = useState(0);
   const [drawResult, setDrawResult] = useState<EventPrizeWinner[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -33,16 +32,15 @@ const EventDrawContainer = () => {
   const { data: settings } = useClubFairSettingsQuery();
   const currentStatus = useClubFairStatus(settings);
 
-  // 초기 데이터 로드
+  // 초기 데이터 로드 (기존 추첨 결과 조회)
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         setIsLoading(true);
-        const [users, existingResult] = await Promise.all([getDrawableUsers(), getDrawResult()]);
+        const { drawResult } = await getEventDrawInfo();
 
-        setDrawableCount(users.length);
-        if (existingResult) {
-          setDrawResult(existingResult.prizes);
+        if (drawResult) {
+          setDrawResult(drawResult.prizes);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : '데이터를 불러올 수 없습니다.');
@@ -92,7 +90,6 @@ const EventDrawContainer = () => {
 
   return (
     <EventDrawCard
-      drawableCount={drawableCount}
       drawResult={drawResult}
       isDrawing={isDrawing}
       currentStatus={currentStatus}
