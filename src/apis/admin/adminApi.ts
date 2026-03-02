@@ -1,4 +1,4 @@
-import { ActionCategory, ActionDetail, AdminRole } from '../../constants';
+import { AdminRole } from '../../constants';
 import type { UserAction } from '../../types/db';
 import { supabase } from '../../libs/supabase';
 
@@ -52,11 +52,15 @@ export interface AdminUserSearchItem {
   name: string;
   email: string;
   dotori: number;
+  canGiveFollow: boolean;
+  canGiveStory: boolean;
 }
+
+export type GrantDotoriReason = 'FOLLOW' | 'STORY' | 'GAME1' | 'GAME2' | 'GAME3';
 
 export interface GrantDotoriParams {
   user_id: string;
-  amount: number;
+  reason: GrantDotoriReason;
 }
 
 export interface GrantDotoriResponse {
@@ -82,21 +86,6 @@ export interface DrawEventResponse {
   drawn_at: string;
   prizes: EventPrizeWinner[];
 }
-
-const MOCK_ADMIN_USERS: AdminUserSearchItem[] = [
-  {
-    user_id: 'user_001',
-    name: '김철수',
-    email: 'chulsoo@example.com',
-    dotori: 3,
-  },
-  {
-    user_id: 'user_002',
-    name: '홍길동',
-    email: 'hong@example.com',
-    dotori: 42,
-  },
-];
 
 // 추첨 가능한 유저 목록 (응모한 사람들)
 const MOCK_DRAWABLE_USERS: EventDrawUser[] = [
@@ -194,27 +183,33 @@ export async function searchUsersByPhoneLast4(
 }
 
 export async function grantDotoriToUser(params: GrantDotoriParams): Promise<GrantDotoriResponse> {
-  if (params.amount <= 0) {
-    throw new Error('지급 도토리는 1개 이상이어야 합니다.');
-  }
-
-  const targetUser = MOCK_ADMIN_USERS.find((user) => user.user_id === params.user_id);
-  if (!targetUser) {
-    throw new Error('대상 유저를 찾을 수 없습니다.');
-  }
-
-  targetUser.dotori += params.amount;
-
-  return Promise.resolve({
-    user_id: targetUser.user_id,
-    dotori: targetUser.dotori,
-    action: {
-      category: ActionCategory.PURCHASE,
-      detail: ActionDetail.EVENT,
-      change: params.amount,
-      created_at: new Date().toISOString(),
+  const { data, error } = await supabase.functions.invoke('give-dotori', {
+    body: {
+      userId: params.user_id,
+      detail: params.reason,
     },
   });
+
+  if (error) {
+    throw new Error(error.message ?? '도토리 지급에 실패했습니다.');
+  }
+
+  const result = data as {
+    user_id?: string;
+    dotori?: number;
+    action?: Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
+    error?: string;
+  } | null;
+
+  if (!result || result.error || !result.user_id || result.dotori == null || !result.action) {
+    throw new Error(result?.error ?? '도토리 지급 결과를 불러오지 못했습니다.');
+  }
+
+  return {
+    user_id: result.user_id,
+    dotori: result.dotori,
+    action: result.action,
+  };
 }
 
 export async function getClubFairSettings(): Promise<ClubFairSettings> {

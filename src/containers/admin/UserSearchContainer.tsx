@@ -7,6 +7,8 @@ import UserSearchForm from '../../components/features/admin/UserSearchForm';
 import UserSearchResultItem from '../../components/features/admin/UserSearchResultItem';
 import { colors } from '../../styles/colors';
 import Modal from '../../components/shared/Modal';
+import { ActionDetail, ActionDetailLabel } from '../../constants';
+import type { GrantDotoriReason } from '../../apis/admin/adminApi';
 
 const StyledWindow = styled(Window)`
   width: 100%;
@@ -71,10 +73,25 @@ const ModalActions = styled.div`
   justify-content: flex-end;
 `;
 
+const ReasonList = styled.div`
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
+const ReasonItem = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
 const UserSearchContainer = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
   const [grantTargetUserId, setGrantTargetUserId] = useState<string | null>(null);
+  const [selectedReason, setSelectedReason] = useState<GrantDotoriReason>('FOLLOW');
 
   // 유저 검색 (검색 버튼을 눌렀을 때만 실행)
   const {
@@ -108,10 +125,35 @@ const UserSearchContainer = () => {
       return;
     }
 
+    if (!selectedReason) {
+      alert('지급 사유를 선택해주세요.');
+      return;
+    }
+
     grantMutation.mutate({
       user_id: grantTargetUserId,
-      amount: 1, // 무조건 1개
+      reason: selectedReason,
     });
+  };
+
+  const handleOpenGrantModal = (userId: string) => {
+    setGrantTargetUserId(userId);
+    const user = searchResults.find((u) => u.user_id === userId);
+    if (user) {
+      if (user.canGiveFollow) {
+        setSelectedReason('FOLLOW');
+      } else if (user.canGiveStory) {
+        setSelectedReason('STORY');
+      } else {
+        setSelectedReason('GAME1');
+      }
+    } else {
+      setSelectedReason('FOLLOW');
+    }
+  };
+
+  const handleCloseGrantModal = () => {
+    setGrantTargetUserId(null);
   };
 
   const grantTargetUser = searchResults.find((user) => user.user_id === grantTargetUserId) ?? null;
@@ -142,7 +184,7 @@ const UserSearchContainer = () => {
                     <UserSearchResultItem
                       key={user.user_id}
                       user={user}
-                      onGrantClick={() => setGrantTargetUserId(user.user_id)}
+                      onGrantClick={() => handleOpenGrantModal(user.user_id)}
                       disabled={grantMutation.isPending}
                     />
                   ))}
@@ -164,24 +206,78 @@ const UserSearchContainer = () => {
             )}
 
             {grantTargetUser && (
-              <Modal
-                title="도토리 증정 확인"
-                onClose={() => setGrantTargetUserId(null)}
-                width={320}
-              >
+              <Modal title="도토리 증정" onClose={handleCloseGrantModal} width={340}>
                 <div>
                   <p>
-                    <strong>{grantTargetUser.name}</strong>님에게 도토리 1개를 증정하시겠습니까?
+                    <strong>{grantTargetUser.name}</strong>님에게 도토리 1개를 증정합니다.
                   </p>
+                  <ReasonList>
+                    {grantTargetUser.canGiveFollow && (
+                      <ReasonItem>
+                        <input
+                          type="radio"
+                          id="reason-follow"
+                          name="grant-reason"
+                          value="FOLLOW"
+                          checked={selectedReason === 'FOLLOW'}
+                          onChange={() => setSelectedReason('FOLLOW')}
+                        />
+                        <span>{ActionDetailLabel[ActionDetail.FOLLOW]}</span>
+                      </ReasonItem>
+                    )}
+                    {grantTargetUser.canGiveStory && (
+                      <ReasonItem>
+                        <input
+                          type="radio"
+                          id="reason-story"
+                          name="grant-reason"
+                          value="STORY"
+                          checked={selectedReason === 'STORY'}
+                          onChange={() => setSelectedReason('STORY')}
+                        />
+                        <span>{ActionDetailLabel[ActionDetail.STORY]}</span>
+                      </ReasonItem>
+                    )}
+                    <ReasonItem>
+                      <input
+                        type="radio"
+                        id="reason-game1"
+                        name="grant-reason"
+                        value="GAME1"
+                        checked={selectedReason === 'GAME1'}
+                        onChange={() => setSelectedReason('GAME1')}
+                      />
+                      <span>{ActionDetailLabel[ActionDetail.GAME1]}</span>
+                    </ReasonItem>
+                    <ReasonItem>
+                      <input
+                        type="radio"
+                        id="reason-game2"
+                        name="grant-reason"
+                        value="GAME2"
+                        checked={selectedReason === 'GAME2'}
+                        onChange={() => setSelectedReason('GAME2')}
+                      />
+                      <span>{ActionDetailLabel[ActionDetail.GAME2]}</span>
+                    </ReasonItem>
+                    <ReasonItem>
+                      <input
+                        type="radio"
+                        id="reason-game3"
+                        name="grant-reason"
+                        value="GAME3"
+                        checked={selectedReason === 'GAME3'}
+                        onChange={() => setSelectedReason('GAME3')}
+                      />
+                      <span>{ActionDetailLabel[ActionDetail.GAME3]}</span>
+                    </ReasonItem>
+                  </ReasonList>
                   <ModalActions>
                     <Button onClick={handleGrantDotori} disabled={grantMutation.isPending}>
-                      예
+                      지급
                     </Button>
-                    <Button
-                      onClick={() => setGrantTargetUserId(null)}
-                      disabled={grantMutation.isPending}
-                    >
-                      아니오
+                    <Button onClick={handleCloseGrantModal} disabled={grantMutation.isPending}>
+                      취소
                     </Button>
                   </ModalActions>
                 </div>
