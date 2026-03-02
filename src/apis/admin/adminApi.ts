@@ -3,7 +3,6 @@ import type { UserAction } from '../../types/db';
 import { supabase } from '../../libs/supabase';
 
 // ===== 타입 정의 =====
-/** clubfair_settings 싱글톤 한 줄 = status + force_develop_mode + 구간 종료 시각 3개 */
 export interface ClubFairSettings {
   status?: string; // DEVELOP | PRE | MAIN | AFTER | CLOSED
   forceDevelopMode?: boolean;
@@ -86,14 +85,6 @@ export interface DrawEventResponse {
 }
 
 // ===== Mock 데이터 =====
-// let MOCK_CLUBFAIR_SETTINGS: ClubFairSettings = {
-//   forceDevelopMode: false, // 개발 환경 초기값: true
-//   preEndTime: '2026-02-28T23:59:00+09:00', // PRE 종료 = MAIN 시작 (2/28 23:59)
-//   mainEndTime: '2026-03-05T18:00:00+09:00', // MAIN 종료 = AFTER 시작
-//   afterEndTime: '2026-03-10T23:59:00+09:00', // AFTER 종료 = CLOSED
-// };
-
-// ===== Mock 데이터 (일부 기능에서만 사용) =====
 const MOCK_ADMIN_DASHBOARD_STATS: AdminDashboardStats = {
   visitors_today: 123,
   visitors_total: 400,
