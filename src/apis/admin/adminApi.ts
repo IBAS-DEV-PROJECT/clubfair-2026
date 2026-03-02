@@ -3,18 +3,26 @@ import type { UserAction } from '../../types/db';
 import { supabase } from '../../libs/supabase';
 
 // ===== 타입 정의 =====
+/** clubfair_settings 싱글톤 한 줄 = status + force_develop_mode + 구간 종료 시각 3개 */
 export interface ClubFairSettings {
-  forceDevelopMode: boolean;
-  preEndTime: string;
-  mainEndTime: string;
-  afterEndTime: string;
-}
-
-export interface UpdateClubFairSettingsParams {
+  status?: string; // DEVELOP | PRE | MAIN | AFTER | CLOSED
   forceDevelopMode?: boolean;
   preEndTime?: string;
   mainEndTime?: string;
   afterEndTime?: string;
+}
+
+export interface UpdateClubFairSettingsParams {
+  status?: string;
+  forceDevelopMode?: boolean;
+  preEndTime?: string;
+  mainEndTime?: string;
+  afterEndTime?: string;
+}
+
+export interface ClubFairSettingsResponse {
+  settings: ClubFairSettings;
+  currentStatus: string; // DEVELOP | PRE | MAIN | AFTER | CLOSED
 }
 
 export interface VerifyAdminPinParams {
@@ -78,13 +86,14 @@ export interface DrawEventResponse {
 }
 
 // ===== Mock 데이터 =====
-let MOCK_CLUBFAIR_SETTINGS: ClubFairSettings = {
-  forceDevelopMode: false, // 개발 환경 초기값: true
-  preEndTime: '2026-02-28T23:59:00+09:00', // PRE 종료 = MAIN 시작 (2/28 23:59)
-  mainEndTime: '2026-03-05T18:00:00+09:00', // MAIN 종료 = AFTER 시작
-  afterEndTime: '2026-03-10T23:59:00+09:00', // AFTER 종료 = CLOSED
-};
+// let MOCK_CLUBFAIR_SETTINGS: ClubFairSettings = {
+//   forceDevelopMode: false, // 개발 환경 초기값: true
+//   preEndTime: '2026-02-28T23:59:00+09:00', // PRE 종료 = MAIN 시작 (2/28 23:59)
+//   mainEndTime: '2026-03-05T18:00:00+09:00', // MAIN 종료 = AFTER 시작
+//   afterEndTime: '2026-03-10T23:59:00+09:00', // AFTER 종료 = CLOSED
+// };
 
+// ===== Mock 데이터 (일부 기능에서만 사용) =====
 const MOCK_ADMIN_DASHBOARD_STATS: AdminDashboardStats = {
   visitors_today: 123,
   visitors_total: 400,
@@ -193,42 +202,81 @@ export async function grantDotoriToUser(params: GrantDotoriParams): Promise<Gran
 }
 
 export async function getClubFairSettings(): Promise<ClubFairSettings> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ ...MOCK_CLUBFAIR_SETTINGS });
-    }, 300);
-  });
+  const { data, error } = await supabase.functions.invoke('get-fair-settings');
+
+  if (error) {
+    throw new Error(error.message ?? '설정 정보를 불러오지 못했습니다.');
+  }
+
+  const result = data as {
+    settings?: Record<string, unknown>;
+    currentStatus?: string;
+    error?: string;
+  } | null;
+  if (!result || result.error || !result.settings) {
+    throw new Error(result?.error ?? '설정 정보를 찾을 수 없습니다.');
+  }
+
+  const s = result.settings as Record<string, unknown>;
+  return {
+    status: String(result.currentStatus ?? s?.status ?? 'CLOSED'),
+    forceDevelopMode: !!s?.force_develop_mode,
+    preEndTime: s?.pre_end_time != null ? String(s.pre_end_time) : '',
+    mainEndTime: s?.main_end_time != null ? String(s.main_end_time) : '',
+    afterEndTime: s?.after_end_time != null ? String(s.after_end_time) : '',
+  };
 }
 
 export async function updateClubFairSettings(
   params: UpdateClubFairSettingsParams,
 ): Promise<ClubFairSettings> {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const preEnd = params.preEndTime
-        ? new Date(params.preEndTime)
-        : new Date(MOCK_CLUBFAIR_SETTINGS.preEndTime);
-      const mainEnd = params.mainEndTime
-        ? new Date(params.mainEndTime)
-        : new Date(MOCK_CLUBFAIR_SETTINGS.mainEndTime);
-      const afterEnd = params.afterEndTime
-        ? new Date(params.afterEndTime)
-        : new Date(MOCK_CLUBFAIR_SETTINGS.afterEndTime);
+  const current = await getClubFairSettings();
 
-      if (preEnd >= mainEnd || mainEnd >= afterEnd) {
-        reject(new Error('시간 순서가 올바르지 않습니다. (PRE < MAIN < AFTER)'));
-        return;
-      }
+  const body: {
+    status?: string;
+    force_develop_mode?: boolean;
+    pre_end_time?: string;
+    main_end_time?: string;
+    after_end_time?: string;
+  } = {};
 
-      // 설정 업데이트
-      MOCK_CLUBFAIR_SETTINGS = {
-        ...MOCK_CLUBFAIR_SETTINGS,
-        ...params,
-      };
+  if (params.status != null) body.status = params.status;
+  if (params.forceDevelopMode != null) body.force_develop_mode = params.forceDevelopMode;
+  if (params.preEndTime != null) body.pre_end_time = params.preEndTime;
+  if (params.mainEndTime != null) body.main_end_time = params.mainEndTime;
+  if (params.afterEndTime != null) body.after_end_time = params.afterEndTime;
 
-      resolve({ ...MOCK_CLUBFAIR_SETTINGS });
-    }, 500);
+  if (params.forceDevelopMode != null && !params.forceDevelopMode && current.status === 'DEVELOP') {
+    body.status = 'PRE';
+  }
+
+  const pre = body.pre_end_time ?? current.preEndTime;
+  const main = body.main_end_time ?? current.mainEndTime;
+  const after = body.after_end_time ?? current.afterEndTime;
+  if (pre && main && after) {
+    const p = new Date(pre);
+    const m = new Date(main);
+    const a = new Date(after);
+    if (p >= m || m >= a) {
+      throw new Error('구간 순서는 PRE 종료 < MAIN 종료 < AFTER 종료 이어야 합니다.');
+    }
+  }
+
+  const { data, error } = await supabase.functions.invoke('update-fair-settings', {
+    body,
   });
+
+  if (error) {
+    throw new Error(error.message ?? '설정 정보를 저장하지 못했습니다.');
+  }
+
+  const result = data as { success?: boolean; error?: string } | null;
+  if (result?.error) {
+    throw new Error(result.error);
+  }
+
+  // 저장 후 서버 상태 재조회
+  return getClubFairSettings();
 }
 
 // 추첨 가능한 유저 리스트 조회
