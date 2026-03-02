@@ -15,13 +15,9 @@ export interface MyResult {
   dotori_history: DotoriHistoryItem[];
 }
 
-export interface EnterEventParams {
-  cost?: number;
-}
-
 export interface EnterEventResponse {
+  status: string;
   dotori: number;
-  action: DotoriHistoryItem;
 }
 
 export interface EventResult {
@@ -50,15 +46,20 @@ export async function getMyResult(): Promise<MyResult> {
   return data as MyResult;
 }
 
-export async function enterEvent(params: EnterEventParams = {}): Promise<EnterEventResponse> {
-  const cost = params.cost ?? 5;
+/**
+ * 이벤트 응모
+ * - 도토리 5개 차감
+ * - user_actions에 PURCHASE/EVENT 기록
+ */
+export async function enterEvent(): Promise<EnterEventResponse> {
+  const { data, error } = await supabase.rpc('enter_event');
 
-  if (cost <= 0) {
-    throw new Error('응모 비용은 1 이상이어야 합니다.');
+  if (error) {
+    console.error('enter_event RPC 에러:', error);
+    throw error;
   }
 
-  // TODO: Supabase RPC로 구현 필요
-  throw new Error('Not implemented yet');
+  return data as EnterEventResponse;
 }
 
 /**
