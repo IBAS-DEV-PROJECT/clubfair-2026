@@ -51,7 +51,6 @@ export interface AdminUserSearchItem {
   user_id: string;
   name: string;
   email: string;
-  phone_last4: string;
   dotori: number;
 }
 
@@ -89,14 +88,12 @@ const MOCK_ADMIN_USERS: AdminUserSearchItem[] = [
     user_id: 'user_001',
     name: '김철수',
     email: 'chulsoo@example.com',
-    phone_last4: '9243',
     dotori: 3,
   },
   {
     user_id: 'user_002',
     name: '홍길동',
     email: 'hong@example.com',
-    phone_last4: '1111',
     dotori: 42,
   },
 ];
@@ -180,9 +177,20 @@ export async function searchUsersByPhoneLast4(
     throw new Error('전화번호 뒷자리는 숫자 4자리여야 합니다.');
   }
 
-  return Promise.resolve(
-    MOCK_ADMIN_USERS.filter((user) => user.phone_last4 === params.phone_last4),
-  );
+  const { data, error } = await supabase.functions.invoke('search-users-by-phone', {
+    body: { lastFourDigits: params.phone_last4 },
+  });
+
+  if (error) {
+    throw new Error(error.message ?? '유저 검색에 실패했습니다.');
+  }
+
+  const result = data as { users?: AdminUserSearchItem[]; error?: string } | null;
+  if (!result || result.error) {
+    throw new Error(result?.error ?? '검색 결과를 불러오지 못했습니다.');
+  }
+
+  return result.users ?? [];
 }
 
 export async function grantDotoriToUser(params: GrantDotoriParams): Promise<GrantDotoriResponse> {
