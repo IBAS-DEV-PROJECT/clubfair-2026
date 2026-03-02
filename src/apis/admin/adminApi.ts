@@ -84,17 +84,6 @@ export interface DrawEventResponse {
   prizes: EventPrizeWinner[];
 }
 
-// ===== Mock 데이터 =====
-const MOCK_ADMIN_DASHBOARD_STATS: AdminDashboardStats = {
-  visitors_today: 123,
-  visitors_total: 400,
-  male_ratio: 53,
-  female_ratio: 47,
-  test_participation_rate: 68,
-  game_participation_rate: 42,
-  event_entry_rate: 32,
-};
-
 const MOCK_ADMIN_USERS: AdminUserSearchItem[] = [
   {
     user_id: 'user_001',
@@ -153,7 +142,35 @@ export async function verifyAdminPin(
 }
 
 export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
-  return Promise.resolve(MOCK_ADMIN_DASHBOARD_STATS);
+  const { data, error } = await supabase.functions.invoke('get-admin-stats');
+
+  if (error) {
+    throw new Error(error.message ?? '통계를 불러오지 못했습니다.');
+  }
+
+  const result = data as {
+    todayVisitors?: number;
+    totalVisitors?: number;
+    genderRatio?: { male?: number; female?: number };
+    testRate?: number;
+    gameRate?: number;
+    eventRate?: number;
+    error?: string;
+  } | null;
+
+  if (!result || result.error) {
+    throw new Error(result?.error ?? '통계 데이터를 찾을 수 없습니다.');
+  }
+
+  return {
+    visitors_today: result.todayVisitors ?? 0,
+    visitors_total: result.totalVisitors ?? 0,
+    male_ratio: result.genderRatio?.male ?? 0,
+    female_ratio: result.genderRatio?.female ?? 0,
+    test_participation_rate: result.testRate ?? 0,
+    game_participation_rate: result.gameRate ?? 0,
+    event_entry_rate: result.eventRate ?? 0,
+  };
 }
 
 export async function searchUsersByPhoneLast4(
