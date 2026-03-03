@@ -26,3 +26,5 @@ dist-ssr
 # TypeScript
 *.tsbuildinfo
 
+# Database dump files
+*.sql

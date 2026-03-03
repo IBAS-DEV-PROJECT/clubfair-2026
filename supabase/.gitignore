@@ -1,0 +1,11 @@
+# Supabase
+.branches
+.temp
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local
+
+# Supabase local migrations (개발 중 생성된 임시 파일들)
+supabase/migrations/*.sql
