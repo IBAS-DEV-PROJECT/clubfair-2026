@@ -385,7 +385,8 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 
 [functions.admin-auth]
 enabled = true
-verify_jwt = true
+# PIN 검증만 사용하므로 JWT 검증 비활성화 (401 Invalid JWT 방지)
+verify_jwt = false
 import_map = "./functions/admin-auth/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
@@ -393,3 +394,25 @@ entrypoint = "./functions/admin-auth/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/admin-auth/*.html" ]
+
+# Admin/공개 Edge Functions: PIN 또는 내부 검증으로 보호되므로 JWT 검증 비활성화
+[functions.get-admin-stats]
+verify_jwt = false
+
+[functions.search-users-by-phone]
+verify_jwt = false
+
+[functions.give-dotori]
+verify_jwt = false
+
+[functions.get-fair-settings]
+verify_jwt = false
+
+[functions.update-fair-settings]
+verify_jwt = false
+
+[functions.draw-event-winners]
+verify_jwt = false
+
+[functions.get-event-draw-info]
+verify_jwt = false
