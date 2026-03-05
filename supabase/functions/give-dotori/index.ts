@@ -1,5 +1,5 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
+import { createSupabaseAdmin } from '../_shared/supabase.ts';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -24,11 +24,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 1. 서비스 롤 키를 사용하여 RLS를 무시하는 클라이언트 생성
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-    );
+    const supabase = createSupabaseAdmin();
 
     // 2. 이미 FOLLOW/STORY 보상이 지급된 경우 중복 지급 방지
     if (detail === 'FOLLOW' || detail === 'STORY') {
