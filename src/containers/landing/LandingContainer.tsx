@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { PrimaryButton } from '../../components/shared';
 import { useUserAuthStore } from '../../stores/useUserAuthStore';
 import useIsTestCompletedQuery from '../../hooks/queries/useIsTestCompletedQuery';
-import { useClubFairStatus } from '../../hooks/useClubFairStatus';
-import { useClubFairSettingsQuery } from '../../hooks/queries/admin';
+import { useFairStatus } from '../../hooks/queries/admin';
 import { ClubFairStatus } from '../../constants';
 
 const Container = styled.div`
@@ -18,8 +17,7 @@ const LandingContainer = () => {
   const navigate = useNavigate();
   const { isAuthenticated, loading } = useUserAuthStore();
   const { data: isTestCompleted, isLoading: isTestLoading } = useIsTestCompletedQuery();
-  const { data: settings } = useClubFairSettingsQuery();
-  const clubFairStatus = useClubFairStatus(settings);
+  const { status: clubFairStatus } = useFairStatus();
 
   if (loading || isTestLoading) return null;
 

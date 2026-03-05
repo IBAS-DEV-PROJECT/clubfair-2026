@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Hourglass } from 'react95';
 import { type UpdateClubFairSettingsParams } from '../../apis/admin/adminApi';
-import { useClubFairStatus } from '../../hooks/useClubFairStatus';
-import { useClubFairSettingsQuery } from '../../hooks/queries/admin/useClubFairSettingsQuery';
+import { useFairStatus } from '../../hooks/queries/admin/useFairStatus';
 import { useUpdateClubFairSettingsMutation } from '../../hooks/mutations/admin/useUpdateClubFairSettingsMutation';
 import {
   CurrentStatusBanner,
@@ -38,8 +37,8 @@ const TimeSettingContainer = () => {
   const [afterEndTime, setAfterEndTime] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  // 설정 조회
-  const { data: settings, isLoading } = useClubFairSettingsQuery();
+  // 설정 조회 및 현재 상태
+  const { data: settings, isLoading, status: currentStatus } = useFairStatus();
 
   // 설정 업데이트
   const updateMutation = useUpdateClubFairSettingsMutation({
@@ -52,9 +51,6 @@ const TimeSettingContainer = () => {
       setErrorMessage(error.message);
     },
   });
-
-  // 현재 상태 계산
-  const currentStatus = useClubFairStatus(settings);
 
   // 설정 로드 시 로컬 상태 초기화
   useEffect(() => {
