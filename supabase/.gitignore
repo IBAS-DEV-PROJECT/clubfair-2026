@@ -9,3 +9,5 @@
 
 # Supabase local migrations (개발 중 생성된 임시 파일들)
 supabase/migrations/*.sql
+
+test/

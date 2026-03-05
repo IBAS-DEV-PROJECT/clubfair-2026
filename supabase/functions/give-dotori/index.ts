@@ -5,91 +5,45 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    // 프론트엔드에서 amount를 보내더라도 무시하고 userId와 detail만 받습니다.
     const { userId, detail } = await req.json();
 
+    // 1. 유효성 검사
     if (!userId || !detail) {
-      return new Response(JSON.stringify({ error: 'userId와 지급 사유(detail)는 필수입니다.' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      throw new Error('userId와 지급 사유(detail)는 필수입니다.');
     }
 
-    // 허용된 지급 사유만 처리 (인스타 팔로우, 스토리 공유, 게임 1~3)
-    const allowedDetails = ['FOLLOW', 'STORY', 'GAME1', 'GAME2', 'GAME3'];
+    // 허용 목록에 'TEST' 추가
+    const allowedDetails = ['FOLLOW', 'STORY', 'GAME1', 'GAME2', 'GAME3', 'TEST'];
     if (!allowedDetails.includes(detail)) {
-      return new Response(JSON.stringify({ error: '지원하지 않는 지급 사유입니다.' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      throw new Error('지원하지 않는 지급 사유입니다.');
     }
 
     const supabase = createSupabaseAdmin();
 
-    // 2. 이미 FOLLOW/STORY 보상이 지급된 경우 중복 지급 방지
-    if (detail === 'FOLLOW' || detail === 'STORY') {
-      const { count: existingCount, error: existingError } = await supabase
-        .from('user_actions')
-        .select('user_id', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .eq('category', 'MISSION')
-        .eq('detail', detail);
-
-      if (existingError) throw existingError;
-
-      if ((existingCount ?? 0) > 0) {
-        return new Response(JSON.stringify({ error: '이미 해당 사유로 도토리를 지급했습니다.' }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-    }
-
-    // 3. 현재 도토리 개수 가져오기
-    const { data: user, error: fetchError } = await supabase
-      .from('users')
-      .select('dotori')
-      .eq('id', userId)
-      .single();
-
-    if (fetchError) throw new Error('유저를 찾을 수 없습니다.');
-
-    const newDotori = (user.dotori || 0) + 1;
-
-    // 4. 도토리 개수 업데이트 (무조건 +1 수행)
-    const { error: updateError } = await supabase
-      .from('users')
-      .update({ dotori: newDotori })
-      .eq('id', userId);
-
-    if (updateError) throw updateError;
-
-    // 4. 지급 이력 기록 (user_actions 테이블)
-    const { error: logError } = await supabase.from('user_actions').insert({
-      user_id: userId,
-      category: 'MISSION', // 도토리 획득
-      detail, // 'FOLLOW', 'STORY', 'GAME1~3' 등
-      change: 1, // 무조건 1개 기록
+    // 2. DB에서 생성한 RPC 함수 호출
+    // SECURITY DEFINER 덕분에 rpc 호출 시 RLS를 우회하여 관리자 권한으로 실행됩니다.
+    const { data, error: rpcError } = await supabase.rpc('give_dotori_safe', {
+      p_user_id: userId, // SQL 함수의 매개변수명과 일치시켜야 합니다.
+      p_detail: detail,
     });
 
-    if (logError) throw logError;
+    // RPC 내부에서 RAISE EXCEPTION으로 던진 에러(이미 지급됨 등)를 여기서 잡습니다.
+    if (rpcError) throw rpcError;
 
+    // 3. 성공 응답 반환
     return new Response(
       JSON.stringify({
+        success: true,
         user_id: userId,
-        dotori: newDotori,
-        action: {
-          category: 'MISSION',
-          detail,
-          change: 1,
-          created_at: new Date().toISOString(),
-        },
+        dotori: data.new_dotori,
+        detail: detail,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     );
   } catch (err) {
+    // 에러 발생 시 400 에러와 함께 메시지 전달
     return new Response(JSON.stringify({ error: err.message }), {
       status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
