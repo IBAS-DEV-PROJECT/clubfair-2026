@@ -37,13 +37,13 @@ const TestContainer = () => {
       console.log('테스트 제출 성공!');
       console.log('현재 ClubFair 상태:', clubFairStatus);
       
-      // PRE 기간에는 사전테스트 완료 페이지로, 그 외에는 마이페이지로 이동
+      // PRE 기간에는 사전테스트 완료 페이지로, 그 외에는 로딩 페이지를 거쳐 마이페이지로 이동
       if (clubFairStatus === ClubFairStatus.PRE) {
         console.log('/pre-test-complete로 이동');
         navigate('/pre-test-complete', { replace: true });
       } else {
-        console.log('/my로 이동');
-        navigate('/my', { replace: true });
+        console.log('/test-loading으로 이동');
+        navigate('/test-loading', { replace: true });
       }
     },
     onError: (error: Error) => {
