@@ -3,8 +3,7 @@ import { Hourglass } from 'react95';
 import styled from 'styled-components';
 import { drawEvent, getEventDrawInfo } from '../../apis/admin/adminApi';
 import EventDrawCard from '../../components/features/admin/EventDrawCard';
-import { useClubFairStatus } from '../../hooks/useClubFairStatus';
-import { useClubFairSettingsQuery } from '../../hooks/queries/admin';
+import { useFairStatus } from '../../hooks/queries/admin';
 import type { EventPrizeWinner } from '../../apis/admin/adminApi';
 
 const CenteredContainer = styled.div`
@@ -28,9 +27,8 @@ const EventDrawContainer = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [error, setError] = useState('');
 
-  // ClubFair 설정 및 현재 상태 가져오기
-  const { data: settings } = useClubFairSettingsQuery();
-  const currentStatus = useClubFairStatus(settings);
+  // ClubFair 현재 상태 가져오기
+  const { status: currentStatus } = useFairStatus();
 
   // 초기 데이터 로드 (기존 추첨 결과 조회)
   useEffect(() => {
