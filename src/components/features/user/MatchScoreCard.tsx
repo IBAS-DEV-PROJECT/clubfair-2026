@@ -32,8 +32,9 @@ const MatchScoreCard = ({ score }: MatchScoreCardProps) => {
         <ScoreText>{score}점</ScoreText>
         <Divider />
         <InfoText>
-          • 코사인 유사도: 응답 패턴의 유사도 (0~1)
-          <br />• 점수 = 코사인 유사도 × 100
+          • 유클리드 거리: 응답 패턴의 차이 (0~10)
+          <br />• 점수 = (10 - 거리) × 10
+          <br />• 거리가 가까울수록 높은 점수
         </InfoText>
       </WindowContent>
     </Window>
