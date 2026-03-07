@@ -7,6 +7,7 @@ import UserSearchForm from '../../components/features/admin/UserSearchForm';
 import UserSearchResultItem from '../../components/features/admin/UserSearchResultItem';
 import { colors } from '../../styles/colors';
 import Modal from '../../components/shared/Modal';
+import { AlertModal } from '../../components/shared';
 import { ActionDetail, ActionDetailLabel } from '../../constants';
 import type { GrantDotoriReason } from '../../apis/admin/adminApi';
 
@@ -85,6 +86,11 @@ const ReasonItem = styled.label`
   display: flex;
   align-items: center;
   gap: 6px;
+
+  span {
+    font-size: 15px;
+    font-weight: 500;
+  }
 `;
 
 const UserSearchContainer = () => {
@@ -92,6 +98,8 @@ const UserSearchContainer = () => {
   const [hasSearched, setHasSearched] = useState(false);
   const [grantTargetUserId, setGrantTargetUserId] = useState<string | null>(null);
   const [selectedReason, setSelectedReason] = useState<GrantDotoriReason>('FOLLOW');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // 유저 검색 (검색 버튼을 눌렀을 때만 실행)
   const {
@@ -104,13 +112,13 @@ const UserSearchContainer = () => {
   // 도토리 증정
   const grantMutation = useGrantDotoriMutation({
     onSuccess: (data) => {
-      alert(`도토리 1개가 증정되었습니다!\n${data.user_id}의 현재 도토리: ${data.dotori}개`);
+      setSuccessMessage(`도토리 1개가 증정되었습니다!\n${data.user_id}의 현재 도토리: ${data.dotori}개`);
       setGrantTargetUserId(null);
       // 검색 결과 다시 불러오기
       refetchSearch();
     },
     onError: (error) => {
-      alert(`도토리 증정 실패: ${error.message}`);
+      setErrorMessage(`도토리 증정 실패: ${error.message}`);
     },
   });
 
@@ -121,12 +129,12 @@ const UserSearchContainer = () => {
 
   const handleGrantDotori = () => {
     if (!grantTargetUserId) {
-      alert('유저를 선택해주세요.');
+      setErrorMessage('유저를 선택해주세요.');
       return;
     }
 
     if (!selectedReason) {
-      alert('지급 사유를 선택해주세요.');
+      setErrorMessage('지급 사유를 선택해주세요.');
       return;
     }
 
@@ -286,6 +294,12 @@ const UserSearchContainer = () => {
           </Form>
         </GroupBox>
       </WindowContent>
+      {successMessage && (
+        <AlertModal message={successMessage} onClose={() => setSuccessMessage(null)} />
+      )}
+      {errorMessage && (
+        <AlertModal message={errorMessage} onClose={() => setErrorMessage(null)} />
+      )}
     </StyledWindow>
   );
 };
