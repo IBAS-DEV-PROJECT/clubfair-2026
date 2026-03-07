@@ -4,6 +4,7 @@ import { Hourglass } from 'react95';
 import { type UpdateClubFairSettingsParams } from '../../apis/admin/adminApi';
 import { useFairStatus } from '../../hooks/queries/admin/useFairStatus';
 import { useUpdateClubFairSettingsMutation } from '../../hooks/mutations/admin/useUpdateClubFairSettingsMutation';
+import { AlertModal } from '../../components/shared';
 import {
   CurrentStatusBanner,
   DevelopModeToggle,
@@ -36,6 +37,7 @@ const TimeSettingContainer = () => {
   const [mainEndTime, setMainEndTime] = useState('');
   const [afterEndTime, setAfterEndTime] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // 설정 조회 및 현재 상태
   const { data: settings, isLoading, status: currentStatus } = useFairStatus();
@@ -45,7 +47,7 @@ const TimeSettingContainer = () => {
     onSuccess: () => {
       setErrorMessage('');
       setIsEditMode(false);
-      alert('설정이 저장되었습니다!');
+      setSuccessMessage('설정이 저장되었습니다!');
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -133,6 +135,9 @@ const TimeSettingContainer = () => {
         isSaving={updateMutation.isPending}
         errorMessage={errorMessage}
       />
+      {successMessage && (
+        <AlertModal message={successMessage} onClose={() => setSuccessMessage(null)} />
+      )}
     </>
   );
 };

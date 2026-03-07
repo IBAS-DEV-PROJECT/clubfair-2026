@@ -47,11 +47,6 @@ const SignUpContainer = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!privacyConsent) {
-      alert('개인정보 처리 방침에 동의해주세요.');
-      return;
-    }
-
     // 전화번호 01000000000 형태로 변환
     const fullPhone = `010${phone1}${phone2}`;
 

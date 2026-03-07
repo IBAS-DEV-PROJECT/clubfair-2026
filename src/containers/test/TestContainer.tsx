@@ -58,13 +58,6 @@ const TestContainer = () => {
   const handleSubmit = () => {
     console.log('제출 버튼 클릭됨');
     console.log('현재 답변:', answers);
-
-    // 모든 질문에 답변했는지 확인
-    if (answers.some((answer) => answer === null)) {
-      alert('모든 질문에 답변해 주세요.');
-      return;
-    }
-
     console.log('테스트 제출 시작...');
 
     // null이 아닌 것을 확인했으므로 타입 캐스팅
