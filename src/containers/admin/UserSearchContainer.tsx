@@ -128,18 +128,8 @@ const UserSearchContainer = () => {
   };
 
   const handleGrantDotori = () => {
-    if (!grantTargetUserId) {
-      setErrorMessage('유저를 선택해주세요.');
-      return;
-    }
-
-    if (!selectedReason) {
-      setErrorMessage('지급 사유를 선택해주세요.');
-      return;
-    }
-
     grantMutation.mutate({
-      user_id: grantTargetUserId,
+      user_id: grantTargetUserId!,
       reason: selectedReason,
     });
   };

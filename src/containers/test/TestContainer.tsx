@@ -8,6 +8,7 @@ import { useSubmitTestMutation } from '../../hooks/mutations/test';
 import { useClubFairStatus } from '../../hooks/useClubFairStatus';
 import { useClubFairSettingsQuery } from '../../hooks/queries/admin';
 import { ClubFairStatus } from '../../constants';
+import { AlertModal } from '../../components/shared';
 
 const FormWrapper = styled.div`
   display: flex;
@@ -27,6 +28,7 @@ const TestContainer = () => {
   const navigate = useNavigate();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(Array(10).fill(null));
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // ClubFair 상태 확인
   const { data: settings } = useClubFairSettingsQuery();
@@ -51,7 +53,7 @@ const TestContainer = () => {
       const message =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
         '테스트 제출에 실패했습니다. 다시 시도해 주세요.';
-      alert(message);
+      setErrorMessage(message);
     },
   });
 
@@ -74,13 +76,6 @@ const TestContainer = () => {
   const handleSubmit = () => {
     console.log('제출 버튼 클릭됨');
     console.log('현재 답변:', answers);
-    
-    // 모든 질문에 답변했는지 확인
-    if (answers.some((answer) => answer === null)) {
-      alert('모든 질문에 답변해 주세요.');
-      return;
-    }
-
     console.log('테스트 제출 시작...');
     
     // null이 아닌 것을 확인했으므로 타입 캐스팅
@@ -113,6 +108,9 @@ const TestContainer = () => {
           />
         )}
       </ButtonArea>
+      {errorMessage && (
+        <AlertModal message={errorMessage} onClose={() => setErrorMessage(null)} />
+      )}
     </FormWrapper>
   );
 };

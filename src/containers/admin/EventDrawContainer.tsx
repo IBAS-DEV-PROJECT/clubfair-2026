@@ -5,6 +5,7 @@ import { drawEvent, getEventDrawInfo } from '../../apis/admin/adminApi';
 import EventDrawCard from '../../components/features/admin/EventDrawCard';
 import { useClubFairStatus } from '../../hooks/useClubFairStatus';
 import { useClubFairSettingsQuery } from '../../hooks/queries/admin';
+import { AlertModal } from '../../components/shared';
 import type { EventPrizeWinner } from '../../apis/admin/adminApi';
 
 const CenteredContainer = styled.div`
@@ -27,6 +28,8 @@ const EventDrawContainer = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDrawing, setIsDrawing] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // ClubFair 설정 및 현재 상태 가져오기
   const { data: settings } = useClubFairSettingsQuery();
@@ -61,11 +64,11 @@ const EventDrawContainer = () => {
       const result = await drawEvent();
       setDrawResult(result.prizes);
 
-      alert('추첨이 완료되었습니다!');
+      setSuccessMessage('추첨이 완료되었습니다!');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '추첨에 실패했습니다.';
       setError(errorMessage);
-      alert(errorMessage);
+      setErrorMessage(errorMessage);
     } finally {
       setIsDrawing(false);
     }
@@ -89,12 +92,20 @@ const EventDrawContainer = () => {
   }
 
   return (
-    <EventDrawCard
-      drawResult={drawResult}
-      isDrawing={isDrawing}
-      currentStatus={currentStatus}
-      onDraw={handleDraw}
-    />
+    <>
+      <EventDrawCard
+        drawResult={drawResult}
+        isDrawing={isDrawing}
+        currentStatus={currentStatus}
+        onDraw={handleDraw}
+      />
+      {successMessage && (
+        <AlertModal message={successMessage} onClose={() => setSuccessMessage(null)} />
+      )}
+      {errorMessage && (
+        <AlertModal message={errorMessage} onClose={() => setErrorMessage(null)} />
+      )}
+    </>
   );
 };
 
