@@ -34,7 +34,7 @@ const EmailInput = ({
   value,
   onChange,
   id = 'email',
-  label = '이메일',
+  label = '이메일 (아이디)',
   placeholder = 'example@email.com',
 }: EmailInputProps) => {
   const [error, setError] = useState('');
