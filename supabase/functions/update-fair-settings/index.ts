@@ -1,7 +1,6 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { createSupabaseAdmin } from '../_shared/supabase.ts';
 
-/** DB clubfair_settings 싱글톤: status, force_develop_mode, pre_end_time, main_end_time, after_end_time */
 interface UpdateParams {
   status?: string;
   force_develop_mode?: boolean;
@@ -15,51 +14,50 @@ Deno.serve(async (req) => {
 
   try {
     const supabase = createSupabaseAdmin();
-    const params: UpdateParams = await req.json();
+    const updateData: UpdateParams = await req.json();
 
-    if (
-      params.pre_end_time != null &&
-      params.main_end_time != null &&
-      params.after_end_time != null
-    ) {
-      const pre = new Date(params.pre_end_time).getTime();
-      const main = new Date(params.main_end_time).getTime();
-      const after = new Date(params.after_end_time).getTime();
-      if (pre >= main || main >= after) {
-        return new Response(
-          JSON.stringify({ error: '구간 순서: PRE 종료 < MAIN 종료 < AFTER 종료' }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          },
-        );
-      }
+    if (!updateData || Object.keys(updateData).length === 0) {
+      throw new Error('업데이트할 데이터가 없습니다.');
     }
 
-    const { data: existing } = await supabase
+    // [핵심] 시간 기반 상태 계산 로직
+    // 클라이언트에서 시간을 수정해서 보냈을 때만 계산을 수행합니다.
+    const preEnd = updateData.pre_end_time ? new Date(updateData.pre_end_time).getTime() : null;
+    const mainEnd = updateData.main_end_time ? new Date(updateData.main_end_time).getTime() : null;
+    const afterEnd = updateData.after_end_time
+      ? new Date(updateData.after_end_time).getTime()
+      : null;
+
+    if (preEnd && mainEnd && afterEnd) {
+      const now = Date.now();
+      let calculatedStatus = 'CLOSED';
+
+      if (now < preEnd) calculatedStatus = 'PRE';
+      else if (now < mainEnd) calculatedStatus = 'MAIN';
+      else if (now < afterEnd) calculatedStatus = 'AFTER';
+
+      // 계산된 상태를 업데이트 데이터에 강제로 주입합니다.
+      updateData.status = calculatedStatus;
+    }
+
+    // DB 업데이트 실행 (id: 1 행 대상)
+    const { data: updated, error } = await supabase
       .from('clubfair_settings')
-      .select('status, force_develop_mode, pre_end_time, main_end_time, after_end_time')
+      .update(updateData)
       .eq('id', 1)
+      .select()
       .single();
-
-    const forceDevelop = params.force_develop_mode ?? existing?.force_develop_mode ?? false;
-    const row: Record<string, unknown> = {
-      id: 1,
-      updated_at: new Date().toISOString(),
-      status: forceDevelop ? 'DEVELOP' : (params.status ?? existing?.status ?? 'DEVELOP'),
-      force_develop_mode: forceDevelop,
-      pre_end_time: params.pre_end_time ?? existing?.pre_end_time,
-      main_end_time: params.main_end_time ?? existing?.main_end_time,
-      after_end_time: params.after_end_time ?? existing?.after_end_time,
-    };
-
-    const { error } = await supabase.from('clubfair_settings').upsert(row);
 
     if (error) throw error;
 
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        message: 'success',
+        settings: updated,
+        calculatedStatus: updateData.status, // 어떤 상태로 계산되었는지 응답에 포함
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), {
       status: 400,

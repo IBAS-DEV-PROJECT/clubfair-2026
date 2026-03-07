@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import ProtectedUserLayout from '../layouts/ProtectedUserLayout';
-import { LandingPage, MyPage, SignUpPage, LoginPage, TestPage, PreTestCompletePage } from '../pages';
+import { LandingPage, MyPage, SignUpPage, LoginPage, TestPage } from '../pages';
 import { useUserAuthStore } from '../stores/useUserAuthStore';
 
 const UserRoutes = () => {
@@ -20,7 +20,6 @@ const UserRoutes = () => {
 
       <Route element={<ProtectedUserLayout requiredTest={false} />}>
         <Route path="/test" element={<TestPage />} />
-        <Route path="/pre-test-complete" element={<PreTestCompletePage />} />
       </Route>
 
       {/* 로그인 + 테스트 완료 필요 */}

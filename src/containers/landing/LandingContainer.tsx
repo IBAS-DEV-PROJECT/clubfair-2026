@@ -21,9 +21,11 @@ const LandingContainer = () => {
 
   if (loading || isTestLoading) return null;
 
-  // 로그인 + 테스트 완료한 사용자는 PRE 기간이 아닐 때만 마이페이지로 이동
-  // PRE 기간에는 사전테스트 완료 페이지를 거쳤으므로 홈에 남아있음
-  if (isAuthenticated && isTestCompleted && clubFairStatus !== ClubFairStatus.PRE) {
+  const canAccessMyPage =
+    clubFairStatus === ClubFairStatus.MAIN ||
+    clubFairStatus === ClubFairStatus.AFTER ||
+    clubFairStatus === ClubFairStatus.DEVELOP;
+  if (isAuthenticated && isTestCompleted && canAccessMyPage) {
     return <Navigate to="/my" />;
   }
 
