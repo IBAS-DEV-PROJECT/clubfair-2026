@@ -3,6 +3,5 @@ export { default as SignUpPage } from './user/SignUpPage';
 export { default as LoginPage } from './user/LoginPage';
 export { default as TestPage } from './user/TestPage';
 export { default as MyPage } from './user/MyPage';
-export { default as PreTestCompletePage } from './user/PreTestCompletePage';
 export { default as AdminPage } from './admin/AdminPage';
 export { default as AdminSettingPage } from './admin/AdminSettingPage';

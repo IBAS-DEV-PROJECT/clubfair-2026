@@ -5,8 +5,6 @@ import { TEST_QUESTIONS } from '../../constants/testQuestions';
 import QuestionCard from '../../components/features/test/QuestionCard';
 import { CompleteTestButton } from '../../components/features/test';
 import { useSubmitTestMutation } from '../../hooks/mutations/test';
-import { useFairStatus } from '../../hooks/queries/admin';
-import { ClubFairStatus } from '../../constants';
 
 const FormWrapper = styled.div`
   display: flex;
@@ -27,22 +25,10 @@ const TestContainer = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(Array(10).fill(null));
 
-  // ClubFair 상태 확인
-  const { status: clubFairStatus } = useFairStatus();
-
   const submitMutation = useSubmitTestMutation({
     onSuccess: () => {
-      console.log('테스트 제출 성공!');
-      console.log('현재 ClubFair 상태:', clubFairStatus);
-
-      // PRE 기간에는 사전테스트 완료 페이지로, 그 외에는 마이페이지로 이동
-      if (clubFairStatus === ClubFairStatus.PRE) {
-        console.log('/pre-test-complete로 이동');
-        navigate('/pre-test-complete', { replace: true });
-      } else {
-        console.log('/my로 이동');
-        navigate('/my', { replace: true });
-      }
+      // PRE/MAIN 모두 /my로 이동 (MyPage에서 status에 따라 분기)
+      navigate('/my', { replace: true });
     },
     onError: (error: Error) => {
       console.error('테스트 제출 에러:', error);
