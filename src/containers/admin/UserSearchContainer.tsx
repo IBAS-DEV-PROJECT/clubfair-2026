@@ -112,7 +112,9 @@ const UserSearchContainer = () => {
   // 도토리 증정
   const grantMutation = useGrantDotoriMutation({
     onSuccess: (data) => {
-      setSuccessMessage(`도토리 1개가 증정되었습니다!\n${data.user_id}의 현재 도토리: ${data.dotori}개`);
+      setSuccessMessage(
+        `도토리 1개가 증정되었습니다!\n${data.user_id}의 현재 도토리: ${data.dotori}개`,
+      );
       setGrantTargetUserId(null);
       // 검색 결과 다시 불러오기
       refetchSearch();
@@ -297,9 +299,7 @@ const UserSearchContainer = () => {
       {successMessage && (
         <AlertModal message={successMessage} onClose={() => setSuccessMessage(null)} />
       )}
-      {errorMessage && (
-        <AlertModal message={errorMessage} onClose={() => setErrorMessage(null)} />
-      )}
+      {errorMessage && <AlertModal message={errorMessage} onClose={() => setErrorMessage(null)} />}
     </StyledWindow>
   );
 };
