@@ -3,4 +3,3 @@ export { default as DotoriHistoryList } from './DotoriHistoryList';
 export { default as MatchedInstagramCard } from './MatchedInstagramCard';
 export { default as MatchScoreCard } from './MatchScoreCard';
 export { default as PreTestCompleteContent } from './PreTestCompleteContent';
-export { default as PreTesterView } from './PreTesterView';

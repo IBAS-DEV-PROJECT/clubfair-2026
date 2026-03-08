@@ -66,7 +66,7 @@ export interface GrantDotoriParams {
 export interface GrantDotoriResponse {
   user_id: string;
   dotori: number;
-  action: Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
+  action?: Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
 }
 
 export interface EventDrawUser {
@@ -188,7 +188,7 @@ export async function grantDotoriToUser(params: GrantDotoriParams): Promise<Gran
     error?: string;
   } | null;
 
-  if (!result || result.error || !result.user_id || result.dotori == null || !result.action) {
+  if (!result || result.error || !result.user_id || result.dotori == null) {
     throw new Error(result?.error ?? '도토리 지급 결과를 불러오지 못했습니다.');
   }
 

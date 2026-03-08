@@ -64,9 +64,9 @@ const EventDrawContainer = () => {
 
       setSuccessMessage('추첨이 완료되었습니다!');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '추첨에 실패했습니다.';
-      setError(errorMessage);
-      setErrorMessage(errorMessage);
+      const message = err instanceof Error ? err.message : '추첨에 실패했습니다.';
+      setError(message);
+      setErrorMessage(message);
     } finally {
       setIsDrawing(false);
     }
@@ -100,9 +100,7 @@ const EventDrawContainer = () => {
       {successMessage && (
         <AlertModal message={successMessage} onClose={() => setSuccessMessage(null)} />
       )}
-      {errorMessage && (
-        <AlertModal message={errorMessage} onClose={() => setErrorMessage(null)} />
-      )}
+      {errorMessage && <AlertModal message={errorMessage} onClose={() => setErrorMessage(null)} />}
     </>
   );
 };
