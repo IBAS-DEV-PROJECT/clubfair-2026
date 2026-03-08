@@ -37,7 +37,7 @@ const InstagramInput = ({ value, onChange }: InstagramInputProps) => {
       setError('3~30자까지 입력해주세요');
       return;
     }
-    const instagramRegex = /^[a-zA-Z0-9._]+$/;
+    const instagramRegex = /^[a-z0-9._]+$/;
     if (!instagramRegex.test(id)) {
       setError('인스타 아이디 형식이 맞지 않아요');
       return;
@@ -46,8 +46,10 @@ const InstagramInput = ({ value, onChange }: InstagramInputProps) => {
   };
 
   const handleChange = (newValue: string) => {
-    onChange(newValue);
-    validateInstagramId(newValue);
+    // a-z, 0-9, ., _ 만 허용 (대문자는 소문자로 변환)
+    const filtered = newValue.toLowerCase().replace(/[^a-z0-9._]/g, '');
+    onChange(filtered);
+    validateInstagramId(filtered);
   };
 
   return (
