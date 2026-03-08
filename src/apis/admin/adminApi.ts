@@ -1,3 +1,4 @@
+import { FunctionsHttpError } from '@supabase/supabase-js';
 import { AdminRole } from '../../constants';
 import { supabase } from '../../libs/supabase';
 
@@ -176,7 +177,18 @@ export async function grantDotoriToUser(params: GrantDotoriParams): Promise<Gran
   });
 
   if (error) {
-    throw new Error(error.message ?? '도토리 지급에 실패했습니다.');
+    let message = '알 수 없는 에러가 발생했습니다.';
+    try {
+      if (error instanceof FunctionsHttpError && error.context) {
+        const errorData = (await error.context.json()) as { error?: string };
+        message = errorData?.error ?? error.message ?? '도토리 지급에 실패했습니다.';
+      } else {
+        message = error.message ?? '도토리 지급에 실패했습니다.';
+      }
+    } catch {
+      message = error.message ?? '도토리 지급에 실패했습니다.';
+    }
+    throw new Error(message);
   }
 
   const result = data as {

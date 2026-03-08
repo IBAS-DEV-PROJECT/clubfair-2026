@@ -118,7 +118,7 @@ const UserSearchContainer = () => {
       refetchSearch();
     },
     onError: (error) => {
-      setErrorMessage(`도토리 증정 실패: ${error.message}`);
+      setErrorMessage(error.message);
     },
   });
 
