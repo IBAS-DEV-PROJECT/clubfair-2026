@@ -1,5 +1,4 @@
 import { AdminRole } from '../../constants';
-import type { UserAction } from '../../types/db';
 import { supabase } from '../../libs/supabase';
 
 // ===== 타입 정의 =====
@@ -66,7 +65,6 @@ export interface GrantDotoriParams {
 export interface GrantDotoriResponse {
   user_id: string;
   dotori: number;
-  action?: Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
 }
 
 export interface EventDrawUser {
@@ -184,7 +182,6 @@ export async function grantDotoriToUser(params: GrantDotoriParams): Promise<Gran
   const result = data as {
     user_id?: string;
     dotori?: number;
-    action?: Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
     error?: string;
   } | null;
 
@@ -195,7 +192,6 @@ export async function grantDotoriToUser(params: GrantDotoriParams): Promise<Gran
   return {
     user_id: result.user_id,
     dotori: result.dotori,
-    action: result.action,
   };
 }
 
