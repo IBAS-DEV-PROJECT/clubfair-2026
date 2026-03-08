@@ -53,6 +53,7 @@ const PinAuthForm = ({
         <TextInput
           id="pin"
           type="password"
+          autoComplete="one-time-code"
           value={pin}
           onChange={(e) => onPinChange(e.target.value.replace(/\D/g, '').slice(0, 6))}
           placeholder="6자리 PIN"
