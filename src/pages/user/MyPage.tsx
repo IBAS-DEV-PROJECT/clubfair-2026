@@ -4,7 +4,7 @@ import { Hourglass } from 'react95';
 import { useFairStatus } from '../../hooks/queries/admin';
 import { ClubFairStatus } from '../../constants';
 import PreTestCompleteContent from '../../components/features/user/PreTestCompleteContent';
-import PreTesterView from '../../components/features/user/PreTesterView';
+import PreTesterContainer from '../../containers/user/PreTesterContainer';
 import MyResultContainer from '../../containers/user/MyResultContainer';
 import MyEventResultContainer from '../../containers/user/MyEventResultContainer';
 import useMyResultQuery from '../../hooks/queries/useMyResultQuery';
@@ -58,6 +58,25 @@ const MyPage = () => {
     );
   }
 
+  // MAIN, DEVELOP, AFTER: 임원진(사전 테스트 참여자) 판별
+  // user_actions에 TEST 기록이 없고 answers가 있으면 → PRE 기간에 응답 완료한 임원진
+  const hasMainTestRecord =
+    userResult?.dotori_history?.some((item) => item.detail === 'TEST') ?? false;
+  const isPreTester = !isResultFetching && userResult && !hasMainTestRecord;
+
+  if (
+    (status === ClubFairStatus.MAIN ||
+      status === ClubFairStatus.DEVELOP ||
+      status === ClubFairStatus.AFTER) &&
+    isPreTester
+  ) {
+    return (
+      <Wrapper>
+        <PreTesterContainer />
+      </Wrapper>
+    );
+  }
+
   if (status === ClubFairStatus.AFTER) {
     return (
       <Wrapper>
@@ -66,21 +85,7 @@ const MyPage = () => {
     );
   }
 
-  // MAIN, DEVELOP: 임원진(사전 테스트 참여자) 판별
-  // user_actions에 TEST 기록이 없고 answers가 있으면 → PRE 기간에 응답 완료한 임원진
-  const hasMainTestRecord =
-    userResult?.dotori_history?.some((item) => item.detail === 'TEST') ?? false;
-  const isPreTester = !isResultFetching && userResult && !hasMainTestRecord;
-
-  if ((status === ClubFairStatus.MAIN || status === ClubFairStatus.DEVELOP) && isPreTester) {
-    return (
-      <Wrapper>
-        <PreTesterView />
-      </Wrapper>
-    );
-  }
-
-  // 일반 유저: 매칭 결과 + 응모하기
+  // MAIN, DEVELOP 일반 유저: 매칭 결과 + 응모하기
   return (
     <Wrapper>
       <MyResultContainer />
