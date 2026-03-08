@@ -57,6 +57,7 @@ const PasswordInput = ({ value, onChange }: PasswordInputProps) => {
       <TextInput
         id="password"
         type="password"
+        autoComplete="new-password"  // 크롬이 비밀번호 필드임을 인식해 비밀번호 유출 경고 안 뜨도록
         value={value}
         onChange={(e) => handleChange(e.target.value)}
         placeholder="6자리 숫자"
