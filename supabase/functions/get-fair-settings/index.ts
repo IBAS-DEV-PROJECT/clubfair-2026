@@ -8,13 +8,16 @@ Deno.serve(async (req) => {
     const supabase = createSupabaseAdmin();
 
     // 1. DB에서 설정값 가져오기
-    const { data: settings, error } = await supabase.from('clubfair_settings').select('*').single();
+    const { data: settings, error } = await supabase
+      .from('clubfair_settings')
+      .select('*')
+      .eq('id', 1)
+      .single();
 
     if (error) throw error;
 
-    // 2. 시간 계산 없이 DB의 status를 그대로 currentStatus로 사용
-    // 만약 force_develop_mode가 켜져 있다면 'DEVELOP'을, 아니면 DB의 status를 반환합니다.
-    const currentStatus = settings.force_develop_mode ? 'DEVELOP' : (settings.status ?? 'CLOSED');
+    // 2. DB의 status를 그대로 currentStatus로 사용
+    const currentStatus = settings.status ?? 'CLOSED';
 
     return new Response(
       JSON.stringify({
