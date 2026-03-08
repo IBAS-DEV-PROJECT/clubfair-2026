@@ -1,5 +1,5 @@
+import { FunctionsHttpError } from '@supabase/supabase-js';
 import { AdminRole } from '../../constants';
-import type { UserAction } from '../../types/db';
 import { supabase } from '../../libs/supabase';
 
 // ===== 타입 정의 =====
@@ -66,7 +66,6 @@ export interface GrantDotoriParams {
 export interface GrantDotoriResponse {
   user_id: string;
   dotori: number;
-  action?: Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
 }
 
 export interface EventDrawUser {
@@ -91,6 +90,19 @@ export interface EventDrawInfo {
   drawResult: DrawEventResponse | null;
 }
 
+/** Edge Function 에러 시 context.json()에서 커스텀 메시지 추출 */
+async function parseEdgeFunctionError(error: unknown, defaultMessage: string): Promise<string> {
+  try {
+    if (error instanceof FunctionsHttpError && error.context) {
+      const errorData = (await error.context.json()) as { error?: string };
+      return errorData?.error ?? (error as Error).message ?? defaultMessage;
+    }
+    return (error as Error).message ?? defaultMessage;
+  } catch {
+    return (error as Error).message ?? defaultMessage;
+  }
+}
+
 // ===== API 함수 =====
 export async function verifyAdminPin(
   params: VerifyAdminPinParams,
@@ -100,7 +112,8 @@ export async function verifyAdminPin(
   });
 
   if (error) {
-    throw new Error(error.message ?? 'PIN이 일치하지 않습니다.');
+    const message = await parseEdgeFunctionError(error, 'PIN이 일치하지 않습니다.');
+    throw new Error(message);
   }
 
   const result = data as { success?: boolean; role?: string; error?: string } | null;
@@ -118,7 +131,8 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
   const { data, error } = await supabase.functions.invoke('get-admin-stats');
 
   if (error) {
-    throw new Error(error.message ?? '통계를 불러오지 못했습니다.');
+    const message = await parseEdgeFunctionError(error, '통계를 불러오지 못했습니다.');
+    throw new Error(message);
   }
 
   const result = data as {
@@ -158,7 +172,8 @@ export async function searchUsersByPhoneLast4(
   });
 
   if (error) {
-    throw new Error(error.message ?? '유저 검색에 실패했습니다.');
+    const message = await parseEdgeFunctionError(error, '유저 검색에 실패했습니다.');
+    throw new Error(message);
   }
 
   const result = data as { users?: AdminUserSearchItem[]; error?: string } | null;
@@ -178,13 +193,13 @@ export async function grantDotoriToUser(params: GrantDotoriParams): Promise<Gran
   });
 
   if (error) {
-    throw new Error(error.message ?? '도토리 지급에 실패했습니다.');
+    const message = await parseEdgeFunctionError(error, '도토리 지급에 실패했습니다.');
+    throw new Error(message);
   }
 
   const result = data as {
     user_id?: string;
     dotori?: number;
-    action?: Pick<UserAction, 'category' | 'detail' | 'change' | 'created_at'>;
     error?: string;
   } | null;
 
@@ -195,7 +210,6 @@ export async function grantDotoriToUser(params: GrantDotoriParams): Promise<Gran
   return {
     user_id: result.user_id,
     dotori: result.dotori,
-    action: result.action,
   };
 }
 
@@ -203,7 +217,8 @@ export async function getClubFairSettings(): Promise<ClubFairSettings> {
   const { data, error } = await supabase.functions.invoke('get-fair-settings');
 
   if (error) {
-    throw new Error(error.message ?? '설정 정보를 불러오지 못했습니다.');
+    const message = await parseEdgeFunctionError(error, '설정 정보를 불러오지 못했습니다.');
+    throw new Error(message);
   }
 
   const result = data as {
@@ -265,7 +280,8 @@ export async function updateClubFairSettings(
   });
 
   if (error) {
-    throw new Error(error.message ?? '설정 정보를 저장하지 못했습니다.');
+    const message = await parseEdgeFunctionError(error, '설정 정보를 저장하지 못했습니다.');
+    throw new Error(message);
   }
 
   const result = data as { success?: boolean; error?: string } | null;
@@ -282,7 +298,8 @@ export async function drawEvent(): Promise<DrawEventResponse> {
   const { data, error } = await supabase.functions.invoke('draw-event-winners');
 
   if (error) {
-    throw new Error(error.message ?? '이벤트 추첨에 실패했습니다.');
+    const message = await parseEdgeFunctionError(error, '이벤트 추첨에 실패했습니다.');
+    throw new Error(message);
   }
 
   const result = data as (DrawEventResponse & { error?: string }) | null;
@@ -302,7 +319,8 @@ export async function getEventDrawInfo(): Promise<EventDrawInfo> {
   const { data, error } = await supabase.functions.invoke('get-event-draw-info');
 
   if (error) {
-    throw new Error(error.message ?? '이벤트 추첨 정보를 불러오지 못했습니다.');
+    const message = await parseEdgeFunctionError(error, '이벤트 추첨 정보를 불러오지 못했습니다.');
+    throw new Error(message);
   }
 
   const result = data as {
