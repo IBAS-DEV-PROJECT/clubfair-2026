@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { TextInput } from 'react95';
+import { TextInput, Button } from 'react95';
 
 interface PasswordInputProps {
   value: string;
@@ -25,8 +25,21 @@ const ErrorMessage = styled.p`
   margin-top: -4px;
 `;
 
+const InputWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
+const ToggleButton = styled(Button)`
+  padding: 4px 8px;
+  font-size: 12px;
+  height: 28px;
+`;
+
 const PasswordInput = ({ value, onChange }: PasswordInputProps) => {
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const validatePassword = (pwd: string) => {
     if (pwd.length === 0) {
@@ -54,16 +67,21 @@ const PasswordInput = ({ value, onChange }: PasswordInputProps) => {
   return (
     <FormField>
       <Label htmlFor="password">비밀번호</Label>
-      <TextInput
-        id="password"
-        type="password"
-        autoComplete="new-password"  // 크롬이 비밀번호 필드임을 인식해 비밀번호 유출 경고 안 뜨도록
-        value={value}
-        onChange={(e) => handleChange(e.target.value)}
-        placeholder="6자리 숫자"
-        maxLength={6}
-        style={{ width: '120px' }}
-      />
+      <InputWrapper>
+        <TextInput
+          id="password"
+          type={showPassword ? "text" : "password"}
+          autoComplete="new-password"  // 크롬이 비밀번호 필드임을 인식해 비밀번호 유출 경고 안 뜨도록
+          value={value}
+          onChange={(e) => handleChange(e.target.value)}
+          placeholder="6자리 숫자"
+          maxLength={6}
+          style={{ width: '120px' }}
+        />
+        <ToggleButton onClick={() => setShowPassword(!showPassword)}>
+          {showPassword ? '숨기기' : '보기'}
+        </ToggleButton>
+      </InputWrapper>
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </FormField>
   );
