@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Hourglass } from 'react95';
 import { DotoriCard, MatchedInstagramCard, MatchScoreCard } from '../../components/features/user';
-import { PrimaryButton } from '../../components/shared';
+import { PrimaryButton, AlertModal } from '../../components/shared';
 import useMyResultQuery from '../../hooks/queries/useMyResultQuery';
 import { useEnterEventMutation } from '../../hooks/mutations/user';
 import { formatPostgresDateTime } from '../../utils/date';
@@ -18,7 +19,14 @@ const LoadingContainer = styled.div`
 
 const MyResultContainer = () => {
   const { data: userResult, isFetching: isResultFetching } = useMyResultQuery();
-  const entryMutation = useEnterEventMutation();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const entryMutation = useEnterEventMutation({
+    onSuccess: (data) => {
+      setSuccessMessage(
+        `1번 응모됐습니다!\n남은 도토리: ${data.dotori}개\n\n결과는 박람회 이후 마이 페이지에서 확인할 수 있어요.`,
+      );
+    },
+  });
 
   if (isResultFetching) {
     return (
@@ -60,6 +68,9 @@ const MyResultContainer = () => {
       >
         응모하기
       </PrimaryButton>
+      {successMessage && (
+        <AlertModal message={successMessage} onClose={() => setSuccessMessage(null)} />
+      )}
     </>
   );
 };

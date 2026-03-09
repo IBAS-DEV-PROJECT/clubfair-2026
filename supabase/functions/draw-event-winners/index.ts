@@ -7,55 +7,56 @@ Deno.serve(async (req) => {
   try {
     const supabase = createSupabaseAdmin();
 
-    // 1. 박람회 상태 체크 (CLOSED 인지 확인)
+    // 1. 박람회 상태 체크 (AFTER에서만 추첨 가능)
     const { data: settings, error: settingsError } = await supabase
       .from('clubfair_settings')
       .select('status')
       .eq('id', 1)
       .single();
 
-    if (settingsError || settings.status !== 'CLOSED') {
-      throw new Error('박람회가 종료(CLOSED)된 상태에서만 추첨이 가능합니다.');
+    if (settingsError || settings.status !== 'AFTER') {
+      throw new Error('박람회가 AFTER 상태에서만 추첨이 가능합니다.');
     }
 
-    // 2. 응모자 목록 가져오기 (entry_id 기록을 위해 id도 함께 가져옴)
+    // 2. 응모자 목록 가져오기 (전체 응모권 - 여러 번 응모 시 풀에 여러 개 포함되어 당첨 확률 증가)
     const { data: entries, error: fetchError } = await supabase
       .from('event_entries')
       .select('id, user_id');
 
     if (fetchError) throw fetchError;
-    if (!entries || entries.length < 7) {
+    const uniqueUserCount = new Set(entries?.map((e) => e.user_id) ?? []).size;
+    if (!entries || uniqueUserCount < 7) {
       throw new Error('응모자가 부족하여 추첨을 진행할 수 없습니다. (최소 7명 필요)');
     }
 
-    // 3. 중복 당첨 방지: 유저별로 가장 먼저 생성된 응모권 하나씩만 남기기
-    const uniqueParticipants = Array.from(
-      entries.reduce((map, entry) => {
-        if (!map.has(entry.user_id)) map.set(entry.user_id, entry.id);
-        return map;
-      }, new Map<string, number>()),
-    ) as [string, number][];
-
-    // 4. 무작위 셔플 (Fisher-Yates Shuffle)
-    for (let i = uniqueParticipants.length - 1; i > 0; i--) {
+    // 3. 전체 응모권 셔플 (여러 번 응모한 사람 = 풀에 여러 개 = 당첨 확률 증가)
+    const shuffledEntries = [...entries];
+    for (let i = shuffledEntries.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [uniqueParticipants[i], uniqueParticipants[j]] = [
-        uniqueParticipants[j],
-        uniqueParticipants[i],
-      ];
+      [shuffledEntries[i], shuffledEntries[j]] = [shuffledEntries[j], shuffledEntries[i]];
+    }
+
+    // 4. 순서대로 순회하며 유저당 첫 등장만 당첨 (중복 당첨 방지, 1인 1당첨)
+    const seenUserIds = new Set<string>();
+    const uniqueWinners: { user_id: string; entry_id: number }[] = [];
+    for (const entry of shuffledEntries) {
+      if (seenUserIds.has(entry.user_id)) continue;
+      seenUserIds.add(entry.user_id);
+      uniqueWinners.push({ user_id: entry.user_id, entry_id: entry.id });
+      if (uniqueWinners.length >= 7) break;
     }
 
     const drawTimestamp = new Date().toISOString();
 
     // 5. 등수별 당첨자 데이터 생성 (1등 1명, 2등 2명, 3등 4명)
-    const winnersData = uniqueParticipants.slice(0, 7).map(([userId, entryId], index) => {
+    const winnersData = uniqueWinners.map(({ user_id, entry_id }, index) => {
       let rank = 3;
       if (index === 0) rank = 1;
       else if (index < 3) rank = 2;
 
       return {
-        user_id: userId,
-        entry_id: entryId, // DB 컬럼명 일치
+        user_id,
+        entry_id,
         rank,
         drawn_at: drawTimestamp,
       };

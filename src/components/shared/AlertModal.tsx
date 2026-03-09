@@ -19,6 +19,7 @@ const Message = styled.p`
   font-size: 14px;
   line-height: 1.5;
   text-align: center;
+  white-space: pre-line;
 `;
 
 const ButtonWrapper = styled.div`
