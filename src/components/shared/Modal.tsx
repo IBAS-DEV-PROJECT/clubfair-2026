@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { Window, WindowContent, WindowHeader } from 'react95';
 import styled from 'styled-components';
 import { colors } from '../../styles/colors';
@@ -13,8 +14,10 @@ const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  min-width: 100%;
+  min-height: 100%;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
@@ -89,7 +92,7 @@ const Modal = ({ title, children, onClose, width = 400 }: ModalProps) => {
     }
   };
 
-  return (
+  const modalContent = (
     <ModalOverlay onClick={handleOverlayClick}>
       <StyledWindow $width={width}>
         <HeaderWrapper>
@@ -102,6 +105,8 @@ const Modal = ({ title, children, onClose, width = 400 }: ModalProps) => {
       </StyledWindow>
     </ModalOverlay>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default Modal;
