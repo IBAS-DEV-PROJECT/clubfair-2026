@@ -20,9 +20,13 @@ const ButtonArea = styled.div`
   margin: 20px 0;
 `;
 
-const TestContainer = () => {
+interface TestContainerProps {
+  currentQuestionIndex: number;
+  setCurrentQuestionIndex: (index: number) => void;
+}
+
+const TestContainer = ({ currentQuestionIndex, setCurrentQuestionIndex }: TestContainerProps) => {
   const navigate = useNavigate();
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(Array(10).fill(null));
 
   const submitMutation = useSubmitTestMutation({
