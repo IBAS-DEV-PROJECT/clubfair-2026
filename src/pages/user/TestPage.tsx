@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import styled from 'styled-components';
-import { Window, WindowHeader, WindowContent } from 'react95';
+import { Window, WindowHeader, WindowContent, Button } from 'react95';
 import TestContainer from '../../containers/test/TestContainer';
 
 const Wrapper = styled.div`
@@ -18,13 +19,38 @@ const FormWindow = styled(Window)`
   max-width: 600px;
 `;
 
+const HeaderWithButton = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+
 const TestPage = () => {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  const handleGoBack = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+
   return (
     <Wrapper>
       <FormWindow>
-        <WindowHeader>이상형 테스트</WindowHeader>
+        <WindowHeader>
+          <HeaderWithButton>
+            {currentQuestionIndex > 0 && (
+              <Button className="padding: 0px font-size: 16px" onClick={handleGoBack}>&lt;</Button>
+            )}
+            이상형 테스트
+          </HeaderWithButton>
+        </WindowHeader>
         <WindowContent>
-          <TestContainer />
+          <TestContainer 
+            currentQuestionIndex={currentQuestionIndex}
+            setCurrentQuestionIndex={setCurrentQuestionIndex}
+          />
         </WindowContent>
       </FormWindow>
     </Wrapper>
