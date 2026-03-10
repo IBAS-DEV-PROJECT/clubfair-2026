@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TEST_QUESTIONS } from '../../constants/testQuestions';
 import QuestionCard from '../../components/features/test/QuestionCard';
-import { CompleteTestButton } from '../../components/features/test';
+import { CompleteTestButton, TestSubmitLoading } from '../../components/features/test';
 import { useSubmitTestMutation } from '../../hooks/mutations/test';
 
 const FormWrapper = styled.div`
@@ -23,16 +22,21 @@ const ButtonArea = styled.div`
 interface TestContainerProps {
   currentQuestionIndex: number;
   setCurrentQuestionIndex: (index: number) => void;
+  onLoadingChange?: (loading: boolean) => void;
 }
 
-const TestContainer = ({ currentQuestionIndex, setCurrentQuestionIndex }: TestContainerProps) => {
-  const navigate = useNavigate();
+const TestContainer = ({
+  currentQuestionIndex,
+  setCurrentQuestionIndex,
+  onLoadingChange,
+}: TestContainerProps) => {
   const [answers, setAnswers] = useState<(number | null)[]>(Array(10).fill(null));
+  const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
 
   const submitMutation = useSubmitTestMutation({
     onSuccess: () => {
-      // PRE/MAIN 모두 /my로 이동 (MyPage에서 status에 따라 분기)
-      navigate('/my', { replace: true });
+      setIsSubmitSuccess(true);
+      // TestSubmitLoading에서 3초 후 /my로 이동
     },
     onError: (error: Error) => {
       console.error('테스트 제출 에러:', error);
@@ -74,6 +78,15 @@ const TestContainer = ({ currentQuestionIndex, setCurrentQuestionIndex }: TestCo
   const isAllAnswered = answers.every((answer) => answer !== null);
   const currentQuestion = TEST_QUESTIONS[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === TEST_QUESTIONS.length - 1;
+
+  const isLoading = isSubmitSuccess || submitMutation.isPending;
+  useEffect(() => {
+    onLoadingChange?.(isLoading);
+  }, [isLoading, onLoadingChange]);
+
+  if (isSubmitSuccess) {
+    return <TestSubmitLoading />;
+  }
 
   return (
     <FormWrapper>
