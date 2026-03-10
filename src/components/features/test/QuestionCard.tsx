@@ -24,6 +24,13 @@ const QuestionProgress = styled.div`
   text-align: center;
 `;
 
+const QuestionImage = styled.img`
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  margin-bottom: 12px;
+`;
+
 const QuestionText = styled.h3`
   font-size: 16px;
   font-weight: bold;
@@ -50,6 +57,9 @@ const QuestionCard = ({
         {currentNumber}/{totalNumber}
       </QuestionProgress>
       <GroupBox label={`질문 ${currentNumber}`}>
+        {question.imageUrl && (
+          <QuestionImage src={question.imageUrl} alt={`질문 ${currentNumber}`} />
+        )}
         <QuestionText>{question.question}</QuestionText>
         <AnswerList>
           {question.options.map((option) => (

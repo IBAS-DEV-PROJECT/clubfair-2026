@@ -25,9 +25,14 @@ const HeaderWithButton = styled.div`
   gap: 10px;
 `;
 
+const BackButton = styled(Button)`
+  padding: 0;
+  font-size: 16px;
+`;
 
 const TestPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGoBack = () => {
     if (currentQuestionIndex > 0) {
@@ -40,16 +45,17 @@ const TestPage = () => {
       <FormWindow>
         <WindowHeader>
           <HeaderWithButton>
-            {currentQuestionIndex > 0 && (
-              <Button className="padding: 0px font-size: 16px" onClick={handleGoBack}>&lt;</Button>
+            {currentQuestionIndex > 0 && !isLoading && (
+              <BackButton onClick={handleGoBack}>&lt;</BackButton>
             )}
             이상형 테스트
           </HeaderWithButton>
         </WindowHeader>
         <WindowContent>
-          <TestContainer 
+          <TestContainer
             currentQuestionIndex={currentQuestionIndex}
             setCurrentQuestionIndex={setCurrentQuestionIndex}
+            onLoadingChange={setIsLoading}
           />
         </WindowContent>
       </FormWindow>

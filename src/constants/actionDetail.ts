@@ -16,8 +16,8 @@ export const ActionDetailLabel: Record<ActionDetail, string> = {
   TEST: '테스트 완료',
   FOLLOW: '인스타 팔로우',
   STORY: '스토리 인증',
-  GAME1: '"투데이(Today)를 잡아라!" ',
-  GAME2: '노래 3초 듣고 맞히기',
-  GAME3: '10초 이상형 스피드 답변',
+  GAME1: '게임 1',
+  GAME2: '게임 2',
+  GAME3: '게임 3',
   EVENT: '이벤트 응모',
 };

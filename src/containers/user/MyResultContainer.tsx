@@ -23,7 +23,7 @@ const MyResultContainer = () => {
   const entryMutation = useEnterEventMutation({
     onSuccess: (data) => {
       setSuccessMessage(
-        `1번 응모됐습니다!\n남은 도토리: ${data.dotori}개\n\n결과는 박람회 이후 마이 페이지에서 확인할 수 있어요.`,
+        `이벤트 1회 응모 완료 🌰\n\n남은 도토리: ${data.dotori}개\n\n도토리가 5개 이상 남아있다면 한 번 더 응모 버튼을 눌러주세요!\n\n추첨 결과는 토요일 중 마이페이지에서 확인 가능합니다.\n\n⚠️ 중요: 일요일 저녁 6시에 모든 데이터가 파기되니, 그전까지 당첨 확인 후 화면을 꼭 '캡처'해 두셔야 상품 수령이 가능합니다!`,
       );
     },
   });

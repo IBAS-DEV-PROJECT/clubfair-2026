@@ -1,6 +1,21 @@
+const questionImageModules = import.meta.glob<string>('../assets/images/pixel_question_*.png', {
+  eager: true,
+  as: 'url',
+});
+
+const QUESTION_IMAGE_URLS: Record<number, string> = {};
+Object.entries(questionImageModules).forEach(([path, url]) => {
+  const match = path.match(/pixel_question_(\d+)\.png/);
+  if (match) {
+    const index = parseInt(match[1], 10);
+    QUESTION_IMAGE_URLS[index + 1] = url; // 0 → 질문 1
+  }
+});
+
 export interface TestQuestion {
   id: number;
   question: string;
+  imageUrl?: string;
   options: {
     label: string;
     text: string;
@@ -12,6 +27,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
   {
     id: 1,
     question: '주말이 왔ㄷr..☆ ㄴH 에너ㅈl를 충전ㅎr는 방법은..?',
+    imageUrl: QUESTION_IMAGE_URLS[1],
     options: [
       { label: 'A', text: '왁자지껄 칭구들ㅇl랑 하이루! 번개 모임ㅎr기', value: 0 },
       { label: 'B', text: '조용한 ㅋr페에서 혼ㅈr만의 독서 んı간 갖긔..', value: 1 },
@@ -22,6 +38,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
   {
     id: 2,
     question: '연인과 갈등ㅇl 생겼을 때.. ㄴHㄱr 선택한 대처 방싴은?',
+    imageUrl: QUESTION_IMAGE_URLS[2],
     options: [
       { label: 'A', text: '답답한 건 못 참ㅇr! 그 자리에서 바로 대화ㅎr기', value: 0 },
       { label: 'B', text: '생각 정ㄹl할 んı간ㅇl 필요ㅎH.. 조용히 생각ㅎr기', value: 1 },
@@ -32,6 +49,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
   {
     id: 3,
     question: '여행 당일..☆ ㄴHㄱr 꿈꾸는 여행 스ㅌr일은?!',
+    imageUrl: QUESTION_IMAGE_URLS[3],
     options: [
       { label: 'A', text: '엑셀로 1분 1초까ㅈl 꼼꼼ㅎr게 계획 짜긔', value: 0 },
       { label: 'B', text: '큰 틀만 정ㅎr고 나머ㅈl는 느낌 알잖ㅇr-?', value: 1 },
@@ -42,6 +60,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
   {
     id: 4,
     question: '연인ㅇl 유독 ㅈl쳐 보일 때.. んı간을 ㄴH서 ㄴHㄱr 건네는 위로는?',
+    imageUrl: QUESTION_IMAGE_URLS[4],
     options: [
       { label: 'A', text: '"ㅁrㄴl 힘들었ㅈl..?" 눈물나게 따뜻한 공감해주긔..ㅠ', value: 0 },
       { label: 'B', text: '"이건 이렇게 해ㅂr" ㄴr만 믿으ㄹr구-! 해결책 주기', value: 1 },
@@ -52,6 +71,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
   {
     id: 5,
     question: 'ㄴHㄱr 생각ㅎr는 ㄴ너와ㄴr의 가장 완벽한 연락 んı간은..?',
+    imageUrl: QUESTION_IMAGE_URLS[5],
     options: [
       { label: 'A', text: '아침부터 잘 때까ㅈl.. 일상을 쉴 새 없ㅇl 공유ㅎr기', value: 0 },
       { label: 'B', text: '할 일 ㅎrㄷrㄱr 여유 생길 때.. 틈틈ㅇl 연락ㅎr긔-☆', value: 1 },
@@ -62,6 +82,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
   {
     id: 6,
     question: '둘만의 데이트 하는 날-! 어떤 んı간을 보내고 싶어..?',
+    imageUrl: QUESTION_IMAGE_URLS[6],
     options: [
       { label: 'A', text: '요즘 젤루 핫한 곳 탐방ㅎr며 예쁜 추억(인증샷) 남기긔', value: 0 },
       { label: 'B', text: '분위기 좋은 레스토랑에서 입ㅇl 즐거운 んı간 갖기', value: 1 },
@@ -72,6 +93,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
   {
     id: 7,
     question: 'ㅅr랑을 표현할 때.. ㄴH 마음을 듬뿍 담아 んı간을 쓰는 방식은?',
+    imageUrl: QUESTION_IMAGE_URLS[7],
     options: [
       { label: 'A', text: '"ㅅr랑ㅎH", "고마워"처럼 아낌없ㅇl 말로 표현ㅎr기', value: 0 },
       { label: 'B', text: '말보단 행동-☆ 필요한 걸 슬쩍 챙겨주는 츤데레 되긔', value: 1 },
@@ -82,6 +104,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
   {
     id: 8,
     question: 'ㄴr의 소ㅂl 성향.. 쇼핑할 んı간도 없는 ㄴr를 정의한다면..?',
+    imageUrl: QUESTION_IMAGE_URLS[8],
     options: [
       { label: 'A', text: '오늘만 산ㄷr! 눈에 밟히는 건 일단 지르고 보긔', value: 0 },
       { label: 'B', text: '가계부는 필수-☆ 티끌 모아 태산 만드는 짠순/짠돌이', value: 1 },
@@ -92,6 +115,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
   {
     id: 9,
     question: 'ㄴH 인생 전체를 100%ㄹr고 할 때.. 연애의 비중은 어느 정도일ㄲr..?',
+    imageUrl: QUESTION_IMAGE_URLS[9],
     options: [
       { label: 'A', text: '내 삶의 0순위.. 연애ㄱr 곧 ㄴH 행복의 원동력ㅇl긔-☆', value: 0 },
       { label: 'B', text: '서로의 일상을 공유ㅎr며.. 예쁜 ㅅr랑의 균형 맞추긔♡', value: 1 },
@@ -102,6 +126,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
   {
     id: 10,
     question: '연애를 통해 ㄴHㄱr 가장 얻고 싶은 소중한 んı간은..?',
+    imageUrl: QUESTION_IMAGE_URLS[10],
     options: [
       { label: 'A', text: '만날 때ㅁrㄷr ㈎슴 터질 듯한.. 짜릿한 열정 느끼긔-☆', value: 0 },
       { label: 'B', text: '세상 누구도 못 건드ㄹl는.. 내 편ㅇl 생기는 든든함-훗', value: 1 },
