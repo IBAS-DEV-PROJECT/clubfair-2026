@@ -17,9 +17,10 @@ export function useSubmitTestMutation(options?: UseSubmitTestMutationOptions) {
     mutationFn: submitTestAnswers,
     onSuccess: (data) => {
       queryClient.setQueryData(queryKeys.user.userResult(), data);
-      // 테스트 완료 상태 쿼리 무효화
       if (user?.id) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.user.isTestCompleted(user.id) });
+        queryClient.setQueryData(queryKeys.user.myResult(user.id), data);
+        // 제출 직후이므로 캐시에 true 설정 (invalidate 시 refetch가 false 덮어쓸 수 있음)
+        queryClient.setQueryData(queryKeys.user.isTestCompleted(user.id), true);
       }
       options?.onSuccess?.(data);
     },
