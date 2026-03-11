@@ -44,7 +44,7 @@ const TestSubmitLoading = () => {
 
   return (
     <LoadingWrapper>
-      <LoadingText>제출 중...</LoadingText>
+      <LoadingText>매칭 중...</LoadingText>
       <ProgressBar value={progress} hideValue style={{ width: '100%' }} />
     </LoadingWrapper>
   );
