@@ -84,6 +84,16 @@ const TestContainer = ({
     onLoadingChange?.(isLoading);
   }, [isLoading, onLoadingChange]);
 
+  // 질문 전환 시 이미지 로딩 지연 방지: 모든 이미지 미리 로드
+  useEffect(() => {
+    TEST_QUESTIONS.forEach((q) => {
+      if (q.imageUrl) {
+        const img = new Image();
+        img.src = q.imageUrl;
+      }
+    });
+  }, []);
+
   if (isSubmitSuccess) {
     return <TestSubmitLoading />;
   }
